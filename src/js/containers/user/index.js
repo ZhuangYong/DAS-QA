@@ -197,8 +197,8 @@ class UserIndex extends BaseComponent {
                         {
                             (userInfoData && typeof userInfoData.data.time !== 'undefined') ? <div></div> : <GridTile
                                 onTouchTap={() => {
-                                    linkTo(`user/orderForm`, false, null);
-                                    // linkTo(`user/myOrder`, false, null);
+                                    // linkTo(`user/orderForm`, false, null);
+                                    linkTo(`user/myOrder`, false, null);
                                 }}>
                                 <img
                                     src={MyOrderingsIcon}

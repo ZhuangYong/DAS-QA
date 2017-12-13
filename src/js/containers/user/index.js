@@ -196,8 +196,8 @@ class UserIndex extends BaseComponent {
                         {
                             (userInfoData && typeof userInfoData.data.time !== 'undefined') ? <div></div> : <GridTile
                                 onTouchTap={() => {
-                                    linkTo(`user/orderForm`, false, null);
-                                    // linkTo(`user/myOrder`, false, null);
+                                    // linkTo(`user/orderForm`, false, null);
+                                    linkTo(`user/myOrder`, false, null);
                                 }}>
                                 <img
                                     src={MyOrderingsIcon}
@@ -258,7 +258,7 @@ class UserIndex extends BaseComponent {
                     </header>
 
                     <RecordingGrid
-                        data={(recordsList && recordsList.length) ? recordsList.filter((i, index) => index < 9) : []}
+                        data={(recordsList && recordsList.length) ? recordsList.filter((i, index) => index < 3) : []}
                         operateClick={(uid) => {
                             this.setState({
                                 deleteRecordingUid: uid,
@@ -267,14 +267,15 @@ class UserIndex extends BaseComponent {
                         }}
                     />
 
-                     {/*<Paper
-                         zDepth={0}
-                         style={{margin: '.3rem .267rem 0 .267rem'}}
-                     >
-                         <img src={MallImg} style={{width: '100%'}} onClick={f => location.href = sysConfig.mallIndex}/>
-                     </Paper>*/}
 
                 </section>)}
+
+                <Paper
+                    zDepth={0}
+                    style={{margin: '.3rem .267rem 0 .267rem'}}
+                >
+                         <img src={MallImg} style={{width: '100%'}} onClick={f => location.href = sysConfig.mallIndex}/>
+                     </Paper>
 
                 <MBottomNavigation selectedIndex={2}/>
 

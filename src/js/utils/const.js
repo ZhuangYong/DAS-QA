@@ -22,7 +22,14 @@ export default{
     DOWNLOAD_STATUS_DONE: 1,
     DOWNLOAD_STATUS_DOWN_FAILED: 2,
 
+    // 弹幕应用版本号要求
     BARRAGE_MIN_OTT_VERSION: '1.1.3',
+
+    // 音效 应用版本号要求（nst_sk_a3； sk_stb）
+    EFFECT_MIN_OTT_VERSION: '1.1.4.3',
+
+    // 音效 系统版本号要求（nst_sk_a3； sk_stb）
+    EFFECT_MIN_OTT_ROM_VERSION: '1.0.18',
 
     VIP_ALERT_TIME: 15 * 20 * 60 * 60 * 1000,
 

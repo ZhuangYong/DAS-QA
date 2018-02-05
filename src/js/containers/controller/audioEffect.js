@@ -59,7 +59,8 @@ class AudioEffect extends BaseComponent {
         const {data} = this.props.userInfo.userInfoData || {data: {}};
         let isNstManual = false; //
         if ((data.channel === 'nst_sk_a3' || data.channel === 'sk_stb')) {
-            if (data.appVersion >= Const.EFFECT_MIN_OTT_VERSION && data.romData.version >= Const.EFFECT_MIN_OTT_ROM_VERSION) {
+            // if (data.appVersion >= Const.EFFECT_MIN_OTT_VERSION && data.romData.version >= Const.EFFECT_MIN_OTT_ROM_VERSION) {
+            if (data.appVersion >= Const.EFFECT_MIN_OTT_VERSION) {
                 isNstManual = true;
             }
         }

@@ -984,12 +984,12 @@ class SongController extends BaseComponent {
         // 国光老板卡，显示音控台
         // 新加一个版卡支持音效
         if (data.isReDevice === 1) {
-            if ((data.channel === 'nst_sk_a3' || data.channel === 'sk_stb')) {
-                if (this.props.ottInfo.data.appVersion >= Const.EFFECT_MIN_OTT_VERSION) {
+            if (Const.EFFECT_NST_CHANNEL_LIST.indexOf(data.channel) >= 0) {
+                if (this.props.ottInfo.data.appVersion >= Const.EFFECT_NST_MIN_OTT_VERSION) {
                     return true;
                 }
             }
-            return ((data.channel === 'gg_laobanka' || data.channel === 'gg_f886_ahfy'));
+            return Const.EFFECT_GG_CHANNEL_LIST.indexOf(data.channel) >= 0;
         }
 
     }

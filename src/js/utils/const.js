@@ -26,10 +26,14 @@ export default{
     BARRAGE_MIN_OTT_VERSION: '1.1.3',
 
     // 音效 应用版本号要求（nst_sk_a3； sk_stb）
-    EFFECT_MIN_OTT_VERSION: '1.1.4.3',
+    EFFECT_NST_MIN_OTT_VERSION: '1.1.4.3',
 
     // 音效 系统版本号要求（nst_sk_a3； sk_stb）
     EFFECT_MIN_OTT_ROM_VERSION: '1.0.18',
+
+    EFFECT_NST_CHANNEL_LIST: ["nst_sk_a3", "nst_m3", "nst_a3"],
+
+    EFFECT_GG_CHANNEL_LIST: ["gg_laobanka", "gg_f886_ahfy"],
 
     VIP_ALERT_TIME: 15 * 20 * 60 * 60 * 1000,
 

@@ -17,7 +17,11 @@ import SlidePngMall1 from "../../../img/mall/video.png";
 import SlidePng1 from "../../../img/album/1.png";
 import SlidePng2 from "../../../img/album/2.png";
 import SlidePng3 from "../../../img/album/3.png";
+import SlideK1Png1 from "../../../img/album/k1/1.png";
+import SlideK1Png2 from "../../../img/album/k1/2.png";
+import _ from "lodash";
 import intl from 'react-intl-universal';
+import Const from "../../utils/const";
 
 const AutoPlaySwipeAbleViews = autoPlay(SwipeAbleViews);
 class PlayAudio extends BaseComponent {
@@ -33,6 +37,8 @@ class PlayAudio extends BaseComponent {
             wxTimer: -1,
             musicUrl: "",
             imgUrl: "",
+            sliderImgs: [SlidePngMall1, SlidePng1, SlidePng2, SlidePng3],
+            k1Channel: false,
             autoPlayEd: false
         };
     }
@@ -67,6 +73,17 @@ class PlayAudio extends BaseComponent {
                     autoPlayEd: true
                 });
             }
+
+            const channel = data.channel;
+            if (Const.CHANNEL_CODE_K1_LIST.indexOf(channel) >= 0) {
+                this.state.k1Channel = true;
+                const sliderImgs = [SlideK1Png1, SlideK1Png2, SlidePngMall1, SlidePng1, SlidePng2, SlidePng3];
+                if (!_.isEqual(sliderImgs, this.state.sliderImgs)) {
+                    this.setState({
+                        sliderImgs: sliderImgs
+                    });
+                }
+            }
         }
     }
 
@@ -87,10 +104,11 @@ class PlayAudio extends BaseComponent {
     }
 
     render() {
-        this.refs.audio && console.log(window.audio = this.refs.audio.refs.audio.refs.audio);
+        if (this.refs.audio) window.audio = this.refs.audio.refs.audio.refs.audio;
         const {w, h} = this.props.common;
         const {status, data, msg} = this.props.audio.audioInfo;
-        const {image, musicUrl, musicTime, nameNorm} = data || {};
+        const {image, musicUrl, musicTime, nameNorm, channel} = data || {};
+        const isK1 = Const.CHANNEL_CODE_K1_LIST.indexOf(channel) >= 0;
         let swipePanelStyle = {};
         let topPanelStyle = {};
         if (w > h) {
@@ -104,12 +122,17 @@ class PlayAudio extends BaseComponent {
         return (
             <div className="audio-play">
                 <div className="top-panel" style={topPanelStyle}>
-                        <AutoPlaySwipeAbleViews className="swipe-panel" style={{overflow: 'hidden', ...swipePanelStyle}}>
-                            <div className="img-div" onTouchTap={f => location.href = sysConfig.mallIndex}><img src={SlidePngMall1}/></div>
-                            <div className="img-div"><img src={SlidePng1}/></div>
-                            <div className="img-div"><img src={SlidePng2}/></div>
-                            <div className="img-div"><img src={SlidePng3}/></div>
-                        </AutoPlaySwipeAbleViews>
+                    <AutoPlaySwipeAbleViews className="swipe-panel" style={{overflow: 'hidden', ...swipePanelStyle}}>
+                        {
+                            this.state.sliderImgs.map((imgUrl, index) => {
+                                return imgUrl.indexOf("/mall/") >= 0 ? <div key={index} className="img-div" onTouchTap={f => location.href = sysConfig.mallIndex}>
+                                    <img src={imgUrl}/>
+                                </div> : <div key={index} className="img-div">
+                                    <img src={imgUrl}/>
+                                </div>;
+                            })
+                        }
+                    </AutoPlaySwipeAbleViews>
                     <Audio ref="audio" source={musicUrl} className="audio-item"/>
                 </div>
                 <p className="song-label">
@@ -120,7 +143,9 @@ class PlayAudio extends BaseComponent {
                     <p style={{fontSize: '.32rem', height: '.4rem', margin: 0}}>&nbsp;{`${musicTime || "..."}`}&nbsp;</p>
                 </Subheader>
                 <Subheader style={{paddingRight: 16, textAlign: "center", fontSize: '.4rem', lineHeight: '.6rem', bottom: '.8rem'}}>
-                    <p style={{color: '#ff6832', fontSize: '.32rem'}}>{intl.get("msg.from.j.make")}</p>
+                    <p style={{color: '#ff6832', fontSize: '.32rem'}}>
+                        {`${intl.get("msg.from.j.make")}${isK1 ? ` · AURA SMART智慧KTV` : ''}`}
+                    </p>
                 </Subheader>
 
                 <img src={image} style={{display: "none"}} onError={() => {

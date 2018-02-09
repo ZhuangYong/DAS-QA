@@ -41,4 +41,7 @@ export default{
     // 赠送金额
     DISCOUNT_TYPE_MONEY: '1',
 
+    // K1 渠道号
+    CHANNEL_CODE_K1_LIST: ["gx_gg_k1", "gg_k1haiwai", "gg_k1_child", "gg_stb"]
+
 };

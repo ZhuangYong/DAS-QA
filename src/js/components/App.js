@@ -139,7 +139,7 @@ class App extends BaseComponent {
         this.runCheckLocal();
         //this.removeAppLoading();
         window.addEventListener('resize', this.sizeChange);
-        window.addEventListener('focus', () => {this.updateUserInfo();});
+        window.addEventListener('focus', () => {this.isGetUserInfo() && this.updateUserInfo();});
         this.props.action_updateScreen();
 
         const {isIos} = window.sysInfo;

@@ -46,6 +46,6 @@ export default{
     DISCOUNT_TYPE_MONEY: '1',
 
     // K1 渠道号
-    CHANNEL_CODE_K1_LIST: ["gx_gg_k1", "gg_k1haiwai", "gg_k1_child", "gg_stb"]
+    CHANNEL_CODE_K1_LIST: ["gx_gg_k1", "gg_k1haiwai", "gg_stb"] // , "gg_k1_child"
 
 };

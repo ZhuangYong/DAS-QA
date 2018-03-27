@@ -10,8 +10,8 @@ import {getPhotoAlbumList, uploadImg, deleteImg} from "../../../actions/userActi
 import {linkTo, reqHeader} from "../../../utils/comUtils";
 import BaseComponent from "../../../components/common/BaseComponent";
 import {findDOMNode} from "react-dom";
-import $ from 'jquery';
-import cropper from 'cropper';
+// import $ from 'jquery';
+// import cropper from 'cropper';
 
 import '../../../../css/cropper.css';
 import AppBar from 'material-ui/AppBar';
@@ -49,8 +49,8 @@ let options = {
     minCropBoxHeight: imgMax.screenW * imgMax.scaleRate,
     minCanvasWidth: imgMax.screenW,
     ready: function () {
-        $(this).cropper('scale', imgMax.scaleRate, imgMax.scaleRate);
-        $(this).cropper('crop');
+    //     $(this).cropper('scale', imgMax.scaleRate, imgMax.scaleRate);
+    //     $(this).cropper('crop');
     }
 };
 
@@ -149,7 +149,7 @@ class PhotoAlbum extends BaseComponent {
                                         data: newDataList
                                     });
                                 } else {
-                                    linkTo(`user/photoAlbumPreview/${target.id}`, false, null);
+                                    // linkTo(`user/photoAlbumPreview/${target.id}`, false, null);
                                 }
                             }}
                         />
@@ -177,7 +177,7 @@ class PhotoAlbum extends BaseComponent {
                                     this.setState({
                                         isPhotoAlbumListPage: true
                                     });
-                                    $(this.cropPageImgDom).cropper('destroy');
+                                    // $(this.cropPageImgDom).cropper('destroy');
                                 }}
                             />}
                             iconElementRight={<RaisedButton
@@ -268,24 +268,24 @@ class PhotoAlbum extends BaseComponent {
 
     uploadImg(img) {
         console.log('clickSaveImg');
-        let imgCanvas = $(img).cropper('getCroppedCanvas', {
-            width: imgMax.width,
-            height: imgMax.height,
-            fillColor: '#000',
-            imageSmoothingEnabled: false,
-            imageSmoothingQuality: 'high'
-        });
+        // let imgCanvas = $(img).cropper('getCroppedCanvas', {
+        //     width: imgMax.width,
+        //     height: imgMax.height,
+        //     fillColor: '#000',
+        //     imageSmoothingEnabled: false,
+        //     imageSmoothingQuality: 'high'
+        // });
+        //
+        // let imgBase64 = imgCanvas.toDataURL('image/jpeg', 1);
 
-        let imgBase64 = imgCanvas.toDataURL('image/jpeg', 1);
-
-        const params = this.dataURLtoBlob(imgBase64);
-        console.log(params);
-        this.props.uploadImgActions(params, reqHeader(params), () => {
-            this.setState({
-                isPhotoAlbumListPage: true
-            });
-            $(img).cropper('destroy');
-        });
+        // const params = this.dataURLtoBlob(imgBase64);
+        // console.log(params);
+        // this.props.uploadImgActions(params, reqHeader(params), () => {
+        //     this.setState({
+        //         isPhotoAlbumListPage: true
+        //     });
+            // $(img).cropper('destroy');
+        // });
 
         /*$(img).cropper('destroy');
         this.setState({
@@ -308,7 +308,7 @@ class PhotoAlbum extends BaseComponent {
     }
 
     cropImg(img) {
-        $(img).cropper(options);
+        // $(img).cropper(options);
     }
 
     //**dataURL to blob**

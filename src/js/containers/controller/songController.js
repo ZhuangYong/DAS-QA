@@ -3,7 +3,7 @@ import {bindActionCreators} from "redux";
 import {connect} from "react-redux";
 import {withRouter} from "react-router-dom";
 
-import {dynaPush, isLongWordLanguage, linkTo, reqHeader} from "../../utils/comUtils";
+import {dynaPush, isLongWordLanguage, linkTo, reqHeader, versionMoreThan} from "../../utils/comUtils";
 import BaseComponent from "../../components/common/BaseComponent";
 import MBottomNavigation from "../../components/common/MBottomNavigation";
 import {getChooseList, getHistorySongList, push, pushLocal, setSongTop} from "../../actions/audioActons";
@@ -985,7 +985,7 @@ class SongController extends BaseComponent {
         // 新加一个版卡支持音效
         if (data.isReDevice === 1) {
             if (Const.EFFECT_NST_CHANNEL_LIST.indexOf(data.channel) >= 0) {
-                if (this.props.ottInfo.data.appVersion >= Const.EFFECT_NST_MIN_OTT_VERSION) {
+                if (this.props.ottInfo && versionMoreThan(this.props.ottInfo.data.appVersion, Const.EFFECT_NST_MIN_OTT_VERSION)) {
                     return true;
                 }
             }

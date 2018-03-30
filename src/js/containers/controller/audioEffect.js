@@ -277,7 +277,7 @@ class AudioEffect extends BaseComponent {
                         this.state.controllerIng[AUDIO_EFFECT_TONE_REDUCE] === true ? <CircularProgress
                             size={20}
                             thickness={2}
-                            color="white"/> : <img src={PlusImg} style={{height: '.4rem'}}/>
+                            color="white"/> : <img src={ReduceImg} style={{width: '.4rem'}}/>
                     }
                 </div>
                 <p className="label" style={{color: 'white', fontSize: '.46rem', paddingTop: '1rem'}}>{intl.get("effect.falling")}</p>
@@ -290,7 +290,7 @@ class AudioEffect extends BaseComponent {
                         this.state.controllerIng[AUDIO_EFFECT_TONE_ADD] === true ? <CircularProgress
                             size={20}
                             thickness={2}
-                            color="white"/> : <img src={ReduceImg} style={{width: '.4rem'}}/>
+                            color="white"/> : <img src={PlusImg} style={{height: '.4rem'}}/>
                     }
                 </div>
                 <p className="label" style={{color: 'white', fontSize: '.46rem', paddingTop: '1rem'}}>{intl.get("effect.rising")}</p>

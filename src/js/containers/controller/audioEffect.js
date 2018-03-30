@@ -10,7 +10,7 @@ import LeftArrowIcon from "material-ui/svg-icons/hardware/keyboard-arrow-left";
 import RightArrowIcon from "material-ui/svg-icons/hardware/keyboard-arrow-right";
 import AddIcon from "material-ui/svg-icons/content/add";
 import ReduceIcon from "material-ui/svg-icons/content/remove";
-import {dynaPush, reqHeader} from "../../utils/comUtils";
+import {dynaPush, reqHeader, versionMoreThan} from "../../utils/comUtils";
 import bindActionCreators from "redux/es/bindActionCreators";
 import {push, pushLocal} from "../../actions/audioActons";
 import ToneIconAdd from "../../../img/controller/tone_add.png";
@@ -61,7 +61,7 @@ class AudioEffect extends BaseComponent {
         // if ((data.channel === 'nst_sk_a3' || data.channel === 'sk_stb')) {
         if (Const.EFFECT_NST_CHANNEL_LIST.indexOf(data.channel) >= 0) {
             // if (data.appVersion >= Const.EFFECT_NST_MIN_OTT_VERSION && data.romData.version >= Const.EFFECT_MIN_OTT_ROM_VERSION) {
-            if (data.appVersion >= Const.EFFECT_NST_MIN_OTT_VERSION) {
+            if (versionMoreThan(data.appVersion, Const.EFFECT_NST_MIN_OTT_VERSION)) {
                 isNstManual = true;
             }
         }

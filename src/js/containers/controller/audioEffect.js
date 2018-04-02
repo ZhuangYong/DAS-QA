@@ -269,7 +269,7 @@ class AudioEffect extends BaseComponent {
     renderNstCenter() {
         const {w, h} = this.props.common;
         const revert = w > h;
-        return <div className="center-area nst" style={{backgroundImage: `url(${HBackgroundImg})`, backgroundSize: 'auto 1.7rem', backgroundRepeat: 'no-repeat', paddingTop: 0, marginBottom: '1.6rem', backgroundPosition: 'center .1rem'}}>
+        return <div className="center-area nst" style={{backgroundImage: `url(${HBackgroundImg})`, backgroundSize: 'auto 2.2rem', backgroundRepeat: 'no-repeat', paddingTop: 0, marginBottom: '1.6rem', backgroundPosition: 'center .1rem'}}>
             <div className="fun-button" style={{width: revert ? '16%' : '33.333%'}}>
                 <div className="button white" style={{border: 'none', paddingTop: '.8rem'}} onClick={() => {
                     this.state.controllerIng[AUDIO_EFFECT_TONE_REDUCE] !== true && this.sendEffect(AUDIO_EFFECT_TONE_REDUCE);

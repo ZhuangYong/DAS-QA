@@ -269,7 +269,7 @@ class AudioEffect extends BaseComponent {
     renderNstCenter() {
         const {w, h} = this.props.common;
         const revert = w > h;
-        return <div className="center-area" style={{backgroundImage: `url(${HBackgroundImg})`, backgroundSize: 'auto 2.2rem', backgroundRepeat: 'no-repeat', paddingTop: 0, marginBottom: '1.6rem', backgroundPosition: 'center .1rem'}}>
+        return <div className="center-area nst" style={{backgroundImage: `url(${HBackgroundImg})`, backgroundSize: 'auto 1.7rem', backgroundRepeat: 'no-repeat', paddingTop: 0, marginBottom: '1.6rem', backgroundPosition: 'center .1rem'}}>
             <div className="fun-button" style={{width: revert ? '16%' : '33.333%'}}>
                 <div className="button white" style={{border: 'none', paddingTop: '.8rem'}} onClick={() => {
                     this.state.controllerIng[AUDIO_EFFECT_TONE_REDUCE] !== true && this.sendEffect(AUDIO_EFFECT_TONE_REDUCE);
@@ -278,7 +278,7 @@ class AudioEffect extends BaseComponent {
                         this.state.controllerIng[AUDIO_EFFECT_TONE_REDUCE] === true ? <CircularProgress
                             size={20}
                             thickness={2}
-                            color="white"/> : <img src={PlusImg} style={{height: '.4rem'}}/>
+                            color="white"/> : <img src={ReduceImg} style={{width: '.4rem'}}/>
                     }
                 </div>
                 <p className="label" style={{color: 'white', fontSize: '.46rem', paddingTop: '1.4rem'}}>{intl.get("effect.falling")}</p>
@@ -304,7 +304,7 @@ class AudioEffect extends BaseComponent {
                         this.state.controllerIng[AUDIO_EFFECT_TONE_ADD] === true ? <CircularProgress
                             size={20}
                             thickness={2}
-                            color="white"/> : <img src={ReduceImg} style={{width: '.4rem'}}/>
+                            color="white"/> : <img src={PlusImg} style={{width: '.4rem'}}/>
                     }
                 </div>
                 <p className="label" style={{color: 'white', fontSize: '.46rem', paddingTop: '1.4rem'}}>{intl.get("effect.rising")}</p>
@@ -315,7 +315,7 @@ class AudioEffect extends BaseComponent {
     renderNstBottom() {
         const {w, h} = this.props.common;
         const revert = w > h;
-        return <div className="bottom-area" style={revert ? {marginTop: '.2rem'} : {}}>
+        return <div className="bottom-area nst" style={revert ? {marginTop: '.2rem'} : {}}>
             <div className="fun-button" style={{backgroundImage: `url(${VBackgroundImg})`, backgroundRepeat: 'no-repeat', backgroundSize: 'auto 4.2rem', backgroundPosition: 'center top'}}>
                 <div className="haf-top-button white" style={{border: 'none', height: '2.1rem'}} onClick={() => {
                     this.state.controllerIng[AUDIO_EFFECT_EFFECT_ADD] !== true && this.sendEffect(AUDIO_EFFECT_EFFECT_ADD);

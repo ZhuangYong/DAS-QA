@@ -682,7 +682,7 @@ export function getLanguageCookie() {
 }
 
 export function versionMoreThan(a, b) {
-    if (a === a) return true;
+    if (a === b) return true;
     const bs = b.split(".");
     return a.split(".").some((v, i) => window.parseInt(v) > window.parseInt(bs[i]));
 }

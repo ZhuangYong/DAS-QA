@@ -992,6 +992,9 @@ class SongController extends BaseComponent {
                     return true;
                 }
             }
+            if (Const.EFFECT_K1_CHANNEL_LIST.indexOf(data.channel) >= 0) {
+                return true;
+            }
             return Const.EFFECT_GG_CHANNEL_LIST.indexOf(data.channel) >= 0;
         }
 

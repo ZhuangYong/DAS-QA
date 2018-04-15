@@ -8,7 +8,7 @@ import Route from "react-router-dom/es/Route";
 import NotFound from "../components/common/notfound";
 import Bundle from "../components/Bundle";
 
-import Home from "../containers/home";
+import Home from "../containers/qas";
 import Login from "../containers/login";
 
 import Audio from "../containers/play/audio";
@@ -47,6 +47,7 @@ import InvoiceImage from "../containers/user/orderForm/invoiceImage";
 import InvoiceOrderForDetail from "../containers/user/orderForm/invoiceOrderForDetail";
 import InvoiceSubmitSuccess from "../containers/user/orderForm/invoiceSubmitSuccess";
 import myOrder from "../containers/user/orderForm/myOrder";
+import qaDetail from "../containers/qas/detail";
 
 const LoginContainer = () => (
     <Bundle load={Login}>
@@ -56,6 +57,11 @@ const LoginContainer = () => (
 
 const HomeContainer = () => (
     <Bundle load={Home}>
+        {Component => <Component />}
+    </Bundle>
+);
+const QaDetailContainer = () => (
+    <Bundle load={qaDetail}>
         {Component => <Component />}
     </Bundle>
 );
@@ -226,6 +232,7 @@ export default class router extends React.Component {
             <Switch>
                 <Route path={`/`} exact component={HomeContainer}/>
                 <Route path={`/home`} component={HomeContainer}/>
+                <Route path={`/qa/:id`} component={QaDetailContainer}/>
                 {/*
                         *state: home/aliPaySuccess/aliPayFailed(页面状态)
                         * openid: 用户微信openId

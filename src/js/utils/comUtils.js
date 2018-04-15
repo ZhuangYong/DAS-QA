@@ -325,34 +325,13 @@ export function loadScript(url, callback) {
  * 607a674586b0024ac5343e2cb8b82e4c // 蒋程
  * 59a3254c724a852d10052c65c2c5dfd1 // 朱琴
  */
-export function getEncryptHeader(Oid) {
-    let sessionOid = {};
-    const userInfo = getWxinfoFromSession();
-    if (userInfo.status === 1) {
-        const {data} = userInfo;
-        sessionOid = {
-            wxId: data.uuid,
-            deviceId: data.deviceId
-        };
-    }
-    Oid && (Oid = Object.assign({}, sessionOid, Oid));
-    !Oid && (Oid = sessionOid);
+export function getEncryptHeader(Oid = {}) {
     let encrypt = new JSEncrypt();
     encrypt.setPublicKey('MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKsWVIYQxtPV5MN+3IJJp5bSIcNfYB4AyG0b9C7NSHNP0VmdH5dVBpYFb70wDwLa9YZwFocO1sjxnkZJv83/oA0CAwEAAQ==');
-    //if (!Oid.wxId || !Oid.deviceId) throw Error("微信id或设备id不能为空");
     return {
-        appId: encrypt.encrypt('kalaebb34de801bb67fd'),
-        appVersion: sysConfig.appVersion,
-        wxId: encrypt.encrypt(Oid.wxId || ""),
-        deviceId: encrypt.encrypt(Oid.deviceId || ""),
-        mac: encrypt.encrypt('mac'),
-        // deviceId: encrypt.encrypt("2f8ea06784194d56c19d96d4d75a1b6b"),
-        // mac: encrypt.encrypt('28070d000119'),
-        terminalType: 'weixin',
+        version: sysConfig.appVersion,
+        wak: Oid.wak,
         timeStamp: new Date().getTime().toString(),
-        version: 'v1.0',
-        channel: 'official',
-        language: getLanguageCookie()
     };
 }
 

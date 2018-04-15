@@ -1,0 +1,121 @@
+$title-color: #666666;
+$sub-title-color: #999999;
+$button-color: rgb(253, 178, 16);
+.qa-list{
+    padding: 0!important;
+    .qa-item{
+        margin-bottom: .4rem!important;
+        border-radius: 0!important;
+        hr{
+            width: 94%;
+            margin: auto!important;
+        }
+        .qa-title{
+            font-size: .4rem!important;
+            color: $title-color!important;
+            line-height: .6rem;
+            margin-bottom: .4rem;
+        }
+        .sub-title{
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .time-set{
+            font-size: .3rem!important;
+            padding: .2rem!important;
+            color: $title-color!important;
+            background-color: #f4f4f4;
+        }
+        .qa-introduction{
+            color: $sub-title-color!important;
+        }
+        .qa-button{
+            border: 1px solid $button-color;
+            box-shadow: rgb(255, 248, 232) 0px 1px 6px, rgb(255, 241, 209) 0px 1px 4px!important;
+            button{
+                background-color: transparent!important;
+            }
+            span{
+                color: $button-color!important;
+            }
+        }
+    }
+}
+
+.qa-detail{
+    padding: 0!important;
+    margin-bottom: .4rem!important;
+    border-radius: 0!important;
+    box-shadow: none!important;
+    hr{
+        width: 94%;
+        margin: auto!important;
+    }
+    .txt-introduction, .txt-time, .txt-win-way{
+        font{
+            font-weight: bold;
+        }
+        padding: .1rem .3rem!important;
+        font-size: .35rem!important;
+        line-height: .7rem;
+    }
+    .qa-title{
+        font-size: .5rem!important;
+        color: black!important;
+        line-height: .6rem;
+        margin-bottom: .4rem;
+    }
+    .sub-title{
+        display: flex;
+        align-items: center;
+        font-size: .3rem;
+        .logo-title{
+            height: .5rem;
+            margin-right: .2rem;
+        }
+        div{
+            margin-right: .2rem;
+        }
+    }
+    .time-set{
+        font-size: .3rem!important;
+        padding: .2rem!important;
+        color: $title-color!important;
+        background-color: #f4f4f4;
+    }
+    .qa-introduction{
+        color: $sub-title-color!important;
+    }
+    .qa-buttons{
+        display: flex;
+        justify-content: center;
+        margin-top: 1rem;
+        .status-1{
+
+        }
+        .status-2{
+            border: 1px solid $button-color!important;
+            box-shadow: rgb(255, 248, 232) 0px 1px 6px, rgb(255, 241, 209) 0px 1px 4px!important;
+        }
+        button{
+            background-color: transparent!important;
+            height: 1.2rem!important;
+            width: 5rem;
+            div{
+                line-height: .35rem!important;
+            }
+        }
+        span{
+            color: $button-color!important;
+            font-size: .45rem!important;
+        }
+    }
+    .item-radio{
+        margin: .4rem;
+        svg{
+            fill: $button-color !important;
+        }
+    }
+}
+

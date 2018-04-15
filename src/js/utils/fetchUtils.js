@@ -144,13 +144,14 @@ export function comFetch(dispatch, param, options = {
         }
         return response.json();
     }).then(function (json) {
-        const {status, msg} = json;
-        if (status === 0 && !/^\/locales\/[a-z-A-Z]*\.json/gi.test(url)) throw Error(msg);
+        const {code, msg, data} = json;
+        if (code !== 200 && !/^\/locales\/[a-z-A-Z]*\.json/gi.test(url)) throw Error(msg);
+        if (code === 302) window.location.href = data;
         try {
             dispatch({
                 type: options.action,
                 fetchStatus: 200,
-                data: json,
+                data: data,
                 error: null,
                 param: param
             });
@@ -158,7 +159,7 @@ export function comFetch(dispatch, param, options = {
             console.log(err);
             console.log('fetch success but dispatch error!');
         }
-        callback && callback(json);
+        callback && callback(data);
         // 请求成功回调
     }).catch(rejectFun);
 }

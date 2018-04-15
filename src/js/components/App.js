@@ -2,103 +2,38 @@ import React from "react";
 import {connect} from "react-redux";
 import {bindActionCreators} from "redux";
 import "../../sass/main.scss";
-import {bindDevice, getUserConfig, getUserInfo} from "../actions/userActions";
+import {getUserConfig, getUserInfo} from "../actions/userActions";
 import {
-    getLocalesData,
-    getUserInfoFromSession, setCommonInfo, setGlobAlert, setLocalNet, setWeixinConfigFinished,
+    getUserInfoFromSession,
+    setCommonInfo,
+    setGlobAlert,
+    setWeixinConfigFinished,
     updateScreen
 } from "../actions/common/actions";
 import MuiThemeProvider from "material-ui/styles/MuiThemeProvider";
 import lightBaseTheme from "material-ui/styles/baseThemes/lightBaseTheme";
 import getMuiTheme from "material-ui/styles/getMuiTheme";
 import {
-    chkDevice, reqHeader, wxConfig, getQueryString, getEncryptHeader, linkTo, wxShare,
-    wxAuthorizedUrl, isGetUserInfo, formatTime, setCookie
+    chkDevice,
+    getEncryptHeader,
+    getQueryString,
+    isGetUserInfo,
+    linkTo,
+    reqHeader,
+    wxAuthorizedUrl,
+    wxConfig,
+    wxShare
 } from "../utils/comUtils";
 import {withRouter} from "react-router";
 import {Dialog, FlatButton, Snackbar} from "material-ui";
 import ActionTypes from "../actions/actionTypes";
-import {getOttStatus} from "../actions/deviceAction";
 import sysConfig from "../utils/sysConfig";
-import Const from "../utils/const";
-import TimeIcon from "../../img/common/icon_time.png";
 import BaseComponent from "./common/BaseComponent";
 import intl from 'react-intl-universal';
-import _ from "lodash";
 import Routers from '../router';
-import {cryptoFetch} from "../utils/fetchUtils";
 
 window.sysInfo = chkDevice();
 let wxConfigPaths = [];
-const SUPPOER_LOCALES = [
-    {
-        name: "English",
-        value: "en-US"
-    },
-    {
-        name: "简体中文",
-        value: "zh-CN"
-    },
-    {
-        name: "繁體中文",
-        value: "zh-TW"
-    },
-    {
-        name: "繁體中文",
-        value: "zh-HK"
-    },
-    {
-        name: "English",
-        value: "EN"
-    },
-    {
-        name: "简体中文",
-        value: "CN"
-    },
-    {
-        name: "繁體中文",
-        value: "HK"
-    },
-    {
-        name: "繁體中文",
-        value: "TW"
-    },
-];
-const style = {
-    gxTimePanel: {
-        position: 'fixed',
-        backgroundColor: '#ff6832',
-        bottom: '4rem',
-        right: 0,
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        zIndex: 12,
-        span: {
-            height: '1rem',
-            overflow: 'hidden',
-            width: '2.2rem',
-            textAlign: 'center',
-            paddingLeft: '.2rem',
-            color: 'white',
-            paddingTop: '.13rem',
-            p: {
-                margin: 0,
-                fontSize: '.32rem',
-                lineHeight: '.4rem'
-            }
-        },
-        img: {
-            height: '1rem',
-            position: 'absolute',
-            left: '-.5rem',
-            top: 0,
-            backgroundColor: '#ff6832',
-            padding: '.133rem',
-            borderRadius: '50%',
-        }
-    }
-};
 
 class App extends BaseComponent {
     constructor(props) {
@@ -118,30 +53,23 @@ class App extends BaseComponent {
         this.showMsg = this.showMsg.bind(this);
         this.configWeiXin = this.configWeiXin.bind(this);
         this.sizeChange = this.sizeChange.bind(this);
-        this.runCheckLocal = this.runCheckLocal.bind(this);
         this.updateUserInfo = this.updateUserInfo.bind(this);
         this.validUserStatusDialog = this.validUserStatusDialog.bind(this);
-        this.gxTimer = this.gxTimer.bind(this);
         this.configWxPath = this.configWxPath.bind(this);
-        this.loadLocales = this.loadLocales.bind(this);
     }
 
     componentWillMount() {
     }
 
     componentDidMount() {
-        this.loadLocales();
         if (isGetUserInfo()) {
             this.updateUserInfo();
         } else {
             window.noUserInfo = true;
         }
-        this.runCheckLocal();
-        //this.removeAppLoading();
+        this.removeAppLoading();
         window.addEventListener('resize', this.sizeChange);
-        window.addEventListener('focus', () => {isGetUserInfo() && this.updateUserInfo();});
         this.props.action_updateScreen();
-
         const {isIos} = window.sysInfo;
         if (isIos) {
             this.configWeiXin();
@@ -172,31 +100,10 @@ class App extends BaseComponent {
                 window.noUserInfo = false;
             }
         }
-        const alertData = this.props.alertData;
-        if (alertData === ActionTypes.COMMON.ALERT_TYPE_FREE_ACTIVE) {
-            linkTo("deviceRegister", false, "");
-            this.props.action_setGlobAlert("", "");
-        }
         if (prevProps.userInfo.userInfoStamp !== this.props.userInfo.userInfoStamp) {
-            const {status, data, msg} = this.props.userInfo.userInfoData || {};
-            if (parseInt(status, 10) === 302) {
-                window.location.href = data;
-            } else if (parseInt(status, 10) === 1) {
-                window.sessionStorage.setItem("wxInfo", JSON.stringify(this.props.userInfo.userInfoData));
-                this.props.action_getOttStatus({}, reqHeader({}));
-            }
-
             const {userInfoData} = this.props.userInfo;
-            if (userInfoData && userInfoData.data && userInfoData.data.hasOwnProperty('time')) {
-                if (this.state.gxTimer) {
-                    clearInterval(this.state.gxTimer);
-                    this.state.gxTimer = 0;
-                }
-                this.gxTimer();
-                this.gxUpdateUserInfoTimer();
-            }
+            window.sessionStorage.setItem("wxInfo", JSON.stringify(userInfoData));
         }
-
         this.configWxPath();
     }
 
@@ -224,42 +131,6 @@ class App extends BaseComponent {
                         }}
                     />
                         {validUserStatusDialog}
-
-                        {
-                            (location.pathname !== "/pay" && location.pathname !== "/user" && typeof this.state.gxTime !== 'undefined') ? <div style={style.gxTimePanel}
-                                                                            onClick={() => {
-                                                                                if (super.validUserBindDevice(this.props.userInfo.userInfoData, this.props.action_setGlobAlert) !== true) return;
-
-                                                                                if (super.isFreeActivation(this.props.userInfo.userInfoData)) {
-                                                                                    linkTo(`deviceRegister`, false, null);
-                                                                                    return;
-                                                                                }
-                                                                                const {isIos} = window.sysInfo;
-                                                                                if (isIos) {
-                                                                                    // linkTo(`pay/home`, false, null);
-                                                                                    location.href = '/pay/home';
-                                                                                } else {
-                                                                                    linkTo(`pay/home`, false, null);
-                                                                                }
-                                                                            }}>
-                                <img src={TimeIcon} style={style.gxTimePanel.img}/>
-                                <span style={style.gxTimePanel.span}>
-                                    {
-                                        this.state.gxTime ? <font>
-                                            <p style={style.gxTimePanel.span.p}>
-                                                {intl.get("song.rest.time")}
-                                            </p>
-                                            <p style={style.gxTimePanel.span.p}>
-                                                {formatTime(this.state.gxTime)}
-                                            </p>
-                                        </font> : <p style={{margin: 0, fontSize: '0.32rem', lineHeight: '0.8rem'}}>
-                                                {intl.get("song.sing.now")}
-                                        </p>
-                                    }
-
-                                </span>
-                            </div> : ""
-                        }
                     </div>
                 </MuiThemeProvider>
             </div> : <div/>
@@ -271,6 +142,7 @@ class App extends BaseComponent {
         let appLoadingStyle = document.querySelector("#appLoadingStyle");
         appLoadingDiv && appLoadingDiv.parentNode.removeChild(appLoadingDiv);
         appLoadingStyle && appLoadingStyle.parentNode.removeChild(appLoadingStyle);
+        this.setState({ initDone: true });
     }
 
     // 点击msg的ok按钮
@@ -448,33 +320,32 @@ class App extends BaseComponent {
         let {isWeixin} = window.sysInfo;
         if (isWeixin) {
             // 获取用户信息
-            let wxInfo = {
-                wxId: getQueryString("uuid") || "",
-                deviceId: getQueryString("deviceId") || ""
-            };
-            let wxInfoSession = JSON.parse(window.sessionStorage.getItem("wxInfo") || "{}");
-            if (wxInfoSession.status === -100) {
-                window.sessionStorage.removeItem("wxInfo");
-                wxInfoSession = {};
-            }
-            if (wxInfoSession.data && wxInfoSession.data.hasOwnProperty('time')) {
+            // let wxInfo = {
+            //     wxAuthKey: getQueryString("wak")
+            // };
+            // let wxInfoSession = JSON.parse(window.sessionStorage.getItem("wxInfo") || "{}");
+            // if (wxInfoSession.status === -100) {
+            //     window.sessionStorage.removeItem("wxInfo");
+            //     wxInfoSession = {};
+            // }
+            // if (wxInfoSession.data && wxInfoSession.data.hasOwnProperty('time')) {
                 const params = {
-                    url: `${location.origin}?uuid=${wxInfoSession.data.uuid}&userid=${wxInfoSession.data.userId}&deviceId=${wxInfoSession.data.deviceId}`
+                    wxAuthKey: getQueryString("wak")
                 };
-                wxInfo = {
-                    wxId: wxInfoSession.data.uuid || "",
-                    deviceId: wxInfoSession.data.deviceId || ""
-                };
-                this.props.action_getUserInfo(params, reqHeader(params, getEncryptHeader(wxInfo)));
-            } else if (typeof wxInfoSession.status === "undefined" || !!wxInfo.wxId) {
-                const params = {
-                    url: window.location.href.split("#")[0]
-                };
-                this.props.action_getUserInfo(params, reqHeader(params, getEncryptHeader(wxInfo)));
+            //     wxInfo = {
+            //         wxId: wxInfoSession.data.uuid || "",
+            //         deviceId: wxInfoSession.data.deviceId || ""
+            //     };
+                this.props.action_getUserInfo(params, reqHeader(params, getEncryptHeader(params)));
+            // } else if (typeof wxInfoSession.status === "undefined" || !!wxInfo.wxId) {
+            //     const params = {
+            //         url: window.location.href.split("#")[0]
+            //     };
+            //     this.props.action_getUserInfo(params, reqHeader(params, getEncryptHeader(wxInfo)));
                 // history.replaceState("", "", "/");
-            } else {
-                this.props.action_getUserInfoFromSession();
-            }
+            // } else {
+            //     this.props.action_getUserInfoFromSession();
+            // }
         } else {
             window.sessionStorage.setItem("wxInfo", JSON.stringify({
                 status: -100,
@@ -482,31 +353,6 @@ class App extends BaseComponent {
                 data: {}
             }));
             this.props.action_getUserInfoFromSession();
-        }
-    }
-
-    /**
-     * ott同局域网测试
-     */
-    runCheckLocal() {
-        const {checkLocalTimer} = this.state;
-        if (!checkLocalTimer) {
-            this.state.checkLocalTimer = setInterval(() => {
-                const {checkLocalCount, checkLocalBetween} = this.state;
-                if (this.props.localNetIsWork) {
-                    this.state.checkLocalCount = 0;
-                    return;
-                }
-                if (checkLocalCount >= checkLocalBetween) {
-                    const param = {};
-                    this.props.action_getOttStatus(param, reqHeader(param), () => {
-                        this.props.action_setLocalNet(true);
-                    });
-                    this.state.checkLocalCount = 0;
-                } else {
-                    this.state.checkLocalCount += 1;
-                }
-            }, 1000);
         }
     }
 
@@ -526,58 +372,6 @@ class App extends BaseComponent {
         });
     }
 
-    gxTimer() {
-        const {gxTimer} = this.state;
-        const actionSetGlobAlert = this.props.action_setGlobAlert;
-        if (!gxTimer) {
-            const time = this.state.gxTime = this.props.userInfo.userInfoData.data.time;
-            if (time) {
-                window.localStorage.setItem("gxAlert", '{"done": false}');
-                window.gxAlertDone = false;
-            } else {
-                const defaultGxAlert = JSON.parse(window.localStorage.getItem("gxAlert") || "{}");
-                window.gxAlertDone = defaultGxAlert.done;
-            }
-            this.state.gxTimer = setInterval(() => {
-                if (this.state.gxTime <= 0) {
-                    window.gxTime = 0;
-                    if (!window.gxAlertDone) {
-                        let gxAlert = JSON.parse(window.localStorage.getItem("gxAlert") || "{}");
-                        if (!gxAlert.done) {
-                            const isBindDevice = super.validUserBindDevice(this.props.userInfo.userInfoData, this.props.action_setGlobAlert, true) === true;
-                            if (isBindDevice) {
-                                actionSetGlobAlert && typeof gxAlert.done !== 'undefined' && actionSetGlobAlert("", ActionTypes.COMMON.ALERT_TYPE_GONG_XIANG_DONE);
-                                window.localStorage.setItem("gxAlert", '{"done": true}');
-                            }
-                            window.gxAlertDone = true;
-                            clearInterval(this.state.gxTimer);
-                            this.state.gxTimer = 0;
-                        }
-                    }
-                    return;
-                }
-                const gxTime = --this.state.gxTime;
-                this.setState({
-                    gxTime: gxTime
-                });
-                window.gxTime = gxTime;
-                if (window.gxAlertDone) {
-                    window.localStorage.setItem("gxAlert", '{"done": false}');
-                    window.gxAlertDone = false;
-                }
-            }, 1000);
-        }
-    }
-
-    gxUpdateUserInfoTimer() {
-        if (!this.state.gxUpdateUserInfoTimer) {
-            this.state.gxUpdateUserInfoTimer = setInterval(() => {
-                this.updateUserInfo();
-            }, 1000 * 10);
-        }
-
-    }
-
     configWxPath() {
         const {isWeixin, isIos} = window.sysInfo;
         if (isWeixin && !isIos) {
@@ -586,30 +380,6 @@ class App extends BaseComponent {
                 wxConfigPaths[this.props.history.location.pathname] = true;
             }
         }
-    }
-
-    loadLocales() {
-        let languageFromUrl = getQueryString("language");
-        let currentLocale = languageFromUrl || intl.determineLocale({
-            cookieLocaleKey: "language"
-        });
-        if (!_.find(SUPPOER_LOCALES, { value: currentLocale })) {
-            currentLocale = "zh-CN";
-        }
-        currentLocale && setCookie("language", currentLocale);
-        this.props.action_getLocalesData(currentLocale, res => {
-            intl.init({
-                currentLocale,
-                locales: {
-                    [currentLocale]: res
-                }
-            });
-            this.removeAppLoading();
-            this.setState({ initDone: true });
-        }, err => {
-            this.removeAppLoading();
-            this.setState({ initDone: true });
-        });
     }
 }
 
@@ -621,9 +391,6 @@ const mapStateToProps = (state, ownProps) => {
         alertData: state.app.common.alertData,
         commonInfo: state.app.common.commonInfo,
         language: state.app.common.language,
-        localNetIsWork: state.app.common.localNetIsWork,
-        ottInfo: state.app.device.ottInfo,
-        audioInfo: state.app.audio.audioInfo
     };
 };
 // 映射dispatch到props
@@ -634,12 +401,8 @@ const mapDispatchToProps = (dispatch, ownProps) => {
         action_getUserInfo: bindActionCreators(getUserInfo, dispatch),
         action_getUserInfoFromSession: bindActionCreators(getUserInfoFromSession, dispatch),
         action_setGlobAlert: bindActionCreators(setGlobAlert, dispatch),
-        action_getOttStatus: bindActionCreators(getOttStatus, dispatch),
-        action_setLocalNet: bindActionCreators(setLocalNet, dispatch),
         action_setWeixinConfigFinished: bindActionCreators(setWeixinConfigFinished, dispatch),
-        action_bindDevice: bindActionCreators(bindDevice, dispatch),
         action_setCommonInfo: bindActionCreators(setCommonInfo, dispatch),
-        action_getLocalesData: bindActionCreators(getLocalesData, dispatch)
     };
 };
 

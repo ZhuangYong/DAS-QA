@@ -68,6 +68,12 @@ const USER = {
     API_BIND_DEVICE: "API_BIND_DEVICE"
 };
 
+const QA = {
+    API_QA_LIST: "API_QA_LIST",
+    API_QA_DETAIL: "API_QA_DETAIL",
+    API_QA_EXAMS: "API_QA_EXAMS",
+    API_QA_EXAMS_ITEMS: "API_QA_EXAMS_ITEMS"
+};
 const SONG = {
     API_GET_RECOMMEND: "API_GET_RECOMMEND",
     API_PUSH: "API_PUSH",
@@ -113,6 +119,7 @@ const DEVICE = {
 export default {
     COMMON,
     USER,
+    QA,
     AUDIO,
     SONG,
     SEARCH,

@@ -9,8 +9,6 @@ if (process.env.NODE_ENV === 'production') {
     projectConfig = require('../../config/project.config.dev');
 } else if (process.env.NODE_ENV === 'pre') {
     projectConfig = require('../../config/project.config.prod.pre');
-} else if (process.env.NODE_ENV === 'f4') {
-    projectConfig = require('../../config/project.config.dev.f4');
 }
 
 module.exports = projectConfig;

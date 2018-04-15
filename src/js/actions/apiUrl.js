@@ -38,6 +38,17 @@ export default {
     // 获取微信js sdk config参数
     "API_GET_USER_CONFIG": "/user/config",
 
+    "API_QA_LIST": "/qa/list",
+
+    // 问卷详情表
+    "API_QA_DETAIL": "/qa/f",
+
+    // 问卷题目列表
+    "API_QA_EXAMS": "/qa/f/exams",
+
+    // 问卷题目选项
+    "API_QA_EXAMS_ITEMS": "/qa/f/exam/items",
+
     // 录音分享播放详情
     "API_QUERY_USER_SOUND": "/user/qryUserSound",
     // 录音列表

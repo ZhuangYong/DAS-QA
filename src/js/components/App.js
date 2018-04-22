@@ -67,20 +67,14 @@ class App extends BaseComponent {
         } else {
             window.noUserInfo = true;
         }
-        this.removeAppLoading();
         window.addEventListener('resize', this.sizeChange);
         this.props.action_updateScreen();
-        const {isIos} = window.sysInfo;
-        if (isIos) {
-            this.configWeiXin();
-        }
-        this.configWxPath();
         window.wx && window.wx.ready(() => {
             wxShare({
-                title: intl.get("index.we.chat.song"),
-                desc: intl.get("audio.share.from"),
+                title: "一汽大众·问卷",
+                desc: "挑战自我，不断创新，开创未来",
                 link: wxAuthorizedUrl(sysConfig.appId, sysConfig.apiDomain, location.protocol + "//" + location.host),
-                imgUrl: "http://wx.j-make.cn/img/logo.png",
+                imgUrl: "http://img1.gtimg.com/fj/pics/hv1/95/18/1678/109116635.png",
                 dataUrl: null
             });
         });
@@ -103,8 +97,11 @@ class App extends BaseComponent {
         if (prevProps.userInfo.userInfoStamp !== this.props.userInfo.userInfoStamp) {
             const {userInfoData} = this.props.userInfo;
             window.sessionStorage.setItem("wxInfo", JSON.stringify(userInfoData));
+            if (userInfoData) {
+                this.removeAppLoading();
+                // this.configWxPath();
+            }
         }
-        this.configWxPath();
     }
 
     render() {
@@ -120,7 +117,9 @@ class App extends BaseComponent {
             this.state.initDone ? <div>
                 <MuiThemeProvider className={"App"} muiTheme={getMuiTheme(lightBaseTheme)}>
                     <div className={`${this.state.showDialog ? "show-alert" : ""}`}>
-                    <Routers/>
+                        {
+                            this.props.userInfo.userInfoData ? <Routers/> : ""
+                        }
                     <Snackbar
                         open={showAlert}
                         bodyStyle={{height: 'auto', minHeight: 48, lineHeight: '.7rem', display: 'flex', alignItems: 'center'}}
@@ -181,86 +180,6 @@ class App extends BaseComponent {
         let showAlert = true;
         let doAction;
         switch (alertData) {
-            case ActionTypes.COMMON.ALERT_TYPE_BIND_DEVICE:
-                alertStr = globAlert || intl.get("device.not.bind.do.bind");
-                //TODO BIND DEVICE
-                doAction = () => {
-                    window.wx && window.wx.scanQRCode({
-                        needResult: 1, // 默认为0，扫描结果由微信处理，1则直接返回扫描结果，
-                        scanType: ["qrCode"], // 可以指定扫二维码还是一维码，默认二者都有
-                        success: (res) => {
-                            let result = res.resultStr; // 当needResult 为 1 时，扫码返回的结果
-
-                            if (result.indexOf("/q/") <= 0) {
-                                actionSetGlobAlert && actionSetGlobAlert(intl.get("msg.invalid.qr.code"), "");
-                                return;
-                            }
-
-                            const userInfo = this.props.userInfo.userInfoData.data;
-                            const params = {
-                                openId: userInfo.openid,
-                                url: result
-                            };
-
-                            this.props.action_bindDevice(params, reqHeader(params), (res) => {
-                                const {status} = res;
-                                if (status === 1) {
-                                    const getUserInfoParams = {
-                                        url: window.location.href.split("#")[0]
-                                    };
-                                    this.props.action_getUserInfo(getUserInfoParams, reqHeader(getUserInfoParams), (res) => {
-                                        const {status} = res;
-                                        if (status === 1) {
-                                            window.location.reload(true);
-                                        }
-                                    });
-                                    actionSetGlobAlert(intl.get("msg.bind.success"), "");
-
-                                } else {
-                                    actionSetGlobAlert(intl.get("msg.bind.fail"), "");
-                                }
-                            });
-                        },
-                        fail: (res) => {
-                            console.log(res);
-                            actionSetGlobAlert("", ActionTypes.COMMON.ALERT_TYPE_WX_API_FAIL);
-                        }
-                    });
-                };
-                break;
-            // case ActionTypes.COMMON.ALERT_TYPE_FREE_ACTIVE:
-            //     // alertStr = '激活vip免费体验';
-            //     //TODO ACTIVE
-            //     //linkTo("", false, "");
-            //     break;
-            case ActionTypes.COMMON.ALERT_TYPE_WX_API_FAIL:
-                alertStr = intl.get("msg.operate.need.auth");
-                //TODO ACTIVE
-                //linkTo("", false, "");
-                doAction = () => {
-                    window.location.reload(true);
-                };
-                break;
-            case ActionTypes.COMMON.ALERT_TYPE_BE_VIP:
-                alertStr = intl.get("msg.recharge.as.vip");
-                //TODO VIP
-                doAction = () => {
-                    linkTo("pay/home", false, "");
-                };
-                break;
-            case ActionTypes.COMMON.ALERT_TYPE_GONG_XIANG_DONE:
-                alertStr = <div>
-                    <p style={{fontWeight: 'bold'}}>
-                        {intl.get("msg.song.time.end")}
-                    </p>
-                    <p>
-                        {intl.get("msg.song.continue")}
-                    </p>
-                </div>;
-                doAction = () => {
-                    linkTo("pay/home", false, "");
-                };
-                break;
             case ActionTypes.COMMON.ALERT_TYPE_DEVICE_NOT_ONLINE:
                 showAlert = false;
                 setTimeout(() => {
@@ -330,13 +249,13 @@ class App extends BaseComponent {
             // }
             // if (wxInfoSession.data && wxInfoSession.data.hasOwnProperty('time')) {
                 const params = {
-                    wxAuthKey: getQueryString("wak")
+                    wak: getQueryString("wak") || ""
                 };
             //     wxInfo = {
             //         wxId: wxInfoSession.data.uuid || "",
             //         deviceId: wxInfoSession.data.deviceId || ""
             //     };
-                this.props.action_getUserInfo(params, reqHeader(params, getEncryptHeader(params)));
+                this.props.action_getUserInfo({}, reqHeader({}, getEncryptHeader(params)));
             // } else if (typeof wxInfoSession.status === "undefined" || !!wxInfo.wxId) {
             //     const params = {
             //         url: window.location.href.split("#")[0]
@@ -373,8 +292,8 @@ class App extends BaseComponent {
     }
 
     configWxPath() {
-        const {isWeixin, isIos} = window.sysInfo;
-        if (isWeixin && !isIos) {
+        const {isWeixin} = window.sysInfo;
+        if (isWeixin) {
             if (!wxConfigPaths[this.props.history.location.pathname]) {
                 this.configWeiXin();
                 wxConfigPaths[this.props.history.location.pathname] = true;

@@ -8,9 +8,11 @@ let initState = {
     qaList: null,
     qaDetail: null,
     qaExams: null,
+    qaExamItems: null,
     qaListStamp: 0,
     qaDetailStamp: 0,
-    qaExamsStamp: 0
+    qaExamsStamp: 0,
+    qaExamItemsStamp: 0
 };
 export default (state = initState, action = {}) => {
     switch (action.type) {

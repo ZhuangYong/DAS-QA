@@ -1,7 +1,7 @@
 import React from "react";
 import {render} from "react-dom";
 import {Provider} from "react-redux";
-import {BrowserRouter as Router} from "react-router-dom";
+import {HashRouter as Router} from "react-router-dom";
 import {createBrowserHistory} from "history";
 import {syncHistoryWithStore} from "react-router-redux";
 import injectTapEventPlugin from "react-tap-event-plugin";

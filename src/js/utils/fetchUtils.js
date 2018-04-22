@@ -8,6 +8,7 @@ export function cryptoFetch(options, succ, fail) {
     let url = options.url;
     let param = options.param;
     let fetchOption = {
+        credentials: 'include',
         method: 'post'
     };
     // 设置参数
@@ -62,11 +63,13 @@ export function comFetch(dispatch, param, options = {
 
     let url = options.url;
     let fetchOption = {
+        credentials: 'include',
         method: 'POST'
     };
 
     if (options.headers) {
         fetchOption.headers = options.headers;
+        fetchOption.headers.localUrl = location.href;
     }
 
     if (options.timeout) {
@@ -110,11 +113,20 @@ export function comFetch(dispatch, param, options = {
     // 发起请求
     const rejectCode = Math.random();
     const rejectFun = (err) => {
-        console.log(err);
+        const code = err.message;
+        let msg = "";
+        switch (code) {
+            case "503":
+                msg = "网络超时";
+                break;
+            default:
+                msg = code || "网络异常，请稍后重试！";
+                break;
+        }
         dispatch({
             type: options.action,
             fetchStatus: 1,
-            msg: intl.get("msg.network.die"),
+            msg: msg,
             error: err,
             param: param
         });
@@ -122,7 +134,7 @@ export function comFetch(dispatch, param, options = {
             setTimeout(() => {
                 dispatch({
                     type: ActionTypes.COMMON.COMMON_GLOB_ALERT,
-                    globAlert: intl.get("msg.network.die")
+                    globAlert: msg
                 });
             }, 300);
         }
@@ -145,8 +157,8 @@ export function comFetch(dispatch, param, options = {
         return response.json();
     }).then(function (json) {
         const {code, msg, data} = json;
-        if (code !== 200 && !/^\/locales\/[a-z-A-Z]*\.json/gi.test(url)) throw Error(msg);
         if (code === 302) window.location.href = data;
+        if (code !== 200 && !/^\/locales\/[a-z-A-Z]*\.json/gi.test(url)) throw Error(code);
         try {
             dispatch({
                 type: options.action,

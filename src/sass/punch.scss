@@ -1,0 +1,142 @@
+.punch-container{
+    .punch-head{
+        background: url("../img/qa/bg.jpg") no-repeat;
+        background-size: cover;
+        .score-title{
+            color: white;
+            font-size: .45rem;
+        }
+        .punch-tip{
+            color: white!important;
+        }
+        .punch-center-area{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            .punch-circle{
+                border: .2rem solid #91b0d2;
+                width: 3.7rem;
+                height: 3.7rem;
+                border-radius: 50%;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                background-color: white;
+                &>div{
+                    box-shadow: none!important;
+                }
+                button{
+                    width: 2.7rem !important;
+                    height: 2.7rem !important;
+                    border: .03rem solid #91b0d2!important;
+                    background-color: white!important;
+                    .inner-button{
+                        display: flex;
+                        flex-direction: column;
+                        position: relative;
+                        line-height: 1rem!important;
+                        justify-content: center;
+                        align-items: center;
+                        span{
+                            color: #3c83d5;
+                            position: absolute;
+                            &.status{
+                                top: -.3rem;
+                                width: 100%;
+                                font-size: .6rem;
+                                &:after{
+                                    content: " ";
+                                    position: absolute;
+                                    width: 88%;
+                                    height: 1px;
+                                    border-bottom: 1px solid #c0e8f0;
+                                    left: 6%;
+                                    bottom: 0;
+                                }
+                            }
+                            &.count{
+                                font-size: .4rem;
+                                width: 100%;
+                                top: .5rem;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        .day-check-shows{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            .day-check-item{
+                display: flex;
+                flex-direction: column;
+                .title{
+                    font-size: .26rem;
+                    text-align: center;
+                    color: white;
+                }
+                button{
+                    width: 1.1rem!important;
+                    height: 1.1rem!important;
+                }
+            }
+        }
+        .punch-tip{
+            padding-top: 0!important;
+            text-align: center;
+            margin-bottom: .5rem;
+        }
+    }
+
+    .punch-bottom{
+        box-shadow: none!important;
+        p{
+            color: gray;
+            font-size: .32rem;
+            margin: .1rem 0;
+            svg{
+                width: .32rem!important;
+                height: .32rem!important;
+                margin-right: .4rem;
+            }
+        }
+        .punch-rules-title{
+            position: relative;
+            text-align: center;
+            margin-top: .3rem;
+            span{
+                position: absolute;
+                width: 100%;
+                left: 0;
+                top: 0;
+                z-index: 2;
+                font{
+                    background-color: white;
+                    padding: .2rem;
+                    font-size: .5rem;
+                }
+            }
+            hr{
+                top: .1rem;
+                border-top: 1px solid gray;
+                border-bottom: none!important;
+                position: absolute;
+                left: 0;
+                width: 100%;
+            }
+        }
+        .bottom-buttons{
+            text-align: center;
+            .jump-button{
+                width: 6.5rem;
+                button{
+                    height: 1.3rem!important;
+                    span{
+                        font-size: .5rem!important;
+                    }
+                }
+            }
+        }
+    }
+}

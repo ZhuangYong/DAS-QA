@@ -34,6 +34,43 @@ export function getUserInfo(data, headers, callback) {
     };
 }
 
+export function getUserScore(data, headers, callback) {
+    const url = sysConfig.apiDomain + apiUrl.API_GET_USER_SCORE;
+    return (dispatch) => {
+        comFetch(dispatch, data, {
+            url: url,
+            type: "post",
+            headers: headers,
+            action: ActionTypes.USER.API_GET_USER_SCORE
+        }, callback);
+    };
+}
+
+// 获取用户打卡信息
+export function getUserSignInInfo(data, headers, callback, fail) {
+    const url = sysConfig.apiDomain + apiUrl.API_GET_USER_SIGN_IN_MY;
+    return (dispatch) => {
+        comFetch(dispatch, data, {
+            url: url,
+            type: "post",
+            headers: headers,
+            action: ActionTypes.USER.API_GET_USER_SING_IN_MY
+        }, callback, fail);
+    };
+}
+
+// 用户打卡
+export function userSignIn(data, headers, callback, fail) {
+    const url = sysConfig.apiDomain + apiUrl.API_GET_USER_SIGN_IN;
+    return (dispatch) => {
+        comFetch(dispatch, data, {
+            url: url,
+            type: "post",
+            headers: headers,
+            action: ActionTypes.USER.API_GET_USER_SING_IN
+        }, callback, fail);
+    };
+}
 // 获取微信js sdk config参数
 export function getUserConfig(data, headers, callback) {
     const url = sysConfig.apiDomain + apiUrl.API_GET_USER_CONFIG;

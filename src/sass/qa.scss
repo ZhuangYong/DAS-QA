@@ -6,6 +6,9 @@ $button-color: rgb(253, 178, 16);
     .qa-item{
         margin-bottom: .4rem!important;
         border-radius: 0!important;
+        &>div{
+            padding-bottom: 0!important;
+        }
         hr{
             width: 94%;
             margin: auto!important;
@@ -31,8 +34,14 @@ $button-color: rgb(253, 178, 16);
             color: $sub-title-color!important;
         }
         .qa-button{
+            border-radius: .16rem!important;
             border: 1px solid $button-color;
+            min-width: .6rem!important;
             box-shadow: rgb(255, 248, 232) 0px 1px 6px, rgb(255, 241, 209) 0px 1px 4px!important;
+            *{
+                line-height: .8rem!important;
+                max-height: .8rem!important;
+            }
             button{
                 background-color: transparent!important;
             }
@@ -45,9 +54,22 @@ $button-color: rgb(253, 178, 16);
 
 .qa-detail{
     padding: 0!important;
-    margin-bottom: .4rem!important;
+    //margin-bottom: .4rem!important;
     border-radius: 0!important;
     box-shadow: none!important;
+    overflow-x: hidden;
+    &>div>div{
+        padding-bottom: .3rem!important;
+    }
+    .thumb-img{
+        &>div{
+            padding: 0 .35rem;
+        }
+    }
+    img{
+        max-width: 100%;
+        height: auto;
+    }
     hr{
         width: 94%;
         margin: auto!important;
@@ -61,15 +83,16 @@ $button-color: rgb(253, 178, 16);
         line-height: .7rem;
     }
     .qa-title{
-        font-size: .5rem!important;
+        font-size: .45rem!important;
         color: black!important;
         line-height: .6rem;
-        margin-bottom: .4rem;
+        //margin-bottom: .4rem;
     }
     .sub-title{
         display: flex;
         align-items: center;
         font-size: .3rem;
+        margin-top: .2rem;
         .logo-title{
             height: .5rem;
             margin-right: .2rem;
@@ -91,12 +114,28 @@ $button-color: rgb(253, 178, 16);
         display: flex;
         justify-content: center;
         margin-top: 1rem;
-        .status-1{
-
-        }
-        .status-2{
+        .status-0{
             border: 1px solid $button-color!important;
             box-shadow: rgb(255, 248, 232) 0px 1px 6px, rgb(255, 241, 209) 0px 1px 4px!important;
+        }
+        .status-1{
+            background-color: rgb(254, 178, 15)!important;
+            span{
+                color: white!important;
+            }
+        }
+        .status-2,.status-3{
+            background-color: #fff0cf!important;
+            border: none!important;
+            box-shadow: rgb(255, 248, 232) 0px 1px 6px, rgb(255, 241, 209) 0px 1px 4px!important;
+        }
+        .status-4{
+            background-color: #fd3110!important;
+            border: none!important;
+            box-shadow: rgb(255, 248, 232) 0px 1px 6px, rgb(255, 241, 209) 0px 1px 4px!important;
+            span{
+                color: white!important;
+            }
         }
         button{
             background-color: transparent!important;
@@ -114,7 +153,10 @@ $button-color: rgb(253, 178, 16);
     .item-radio{
         margin: .4rem;
         svg{
-            fill: $button-color !important;
+            fill: gray !important;
+            &:nth-child(2){
+                fill: $button-color!important;
+            }
         }
     }
 }

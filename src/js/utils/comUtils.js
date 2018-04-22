@@ -21,7 +21,7 @@ export function parseTime(time, cFormat) {
     if (typeof time === 'object') {
         date = time;
     } else {
-        if (('' + time).length === 10) time = parseInt(time, 0) * 1000;
+        if (('' + time).length === 10 && ('' + time).indexOf("-") < 0 && ('' + time).indexOf("/") < 0) time = parseInt(time, 0) * 1000;
         date = new Date(time);
     }
     const formatObj = {
@@ -330,7 +330,7 @@ export function getEncryptHeader(Oid = {}) {
     encrypt.setPublicKey('MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAKsWVIYQxtPV5MN+3IJJp5bSIcNfYB4AyG0b9C7NSHNP0VmdH5dVBpYFb70wDwLa9YZwFocO1sjxnkZJv83/oA0CAwEAAQ==');
     return {
         version: sysConfig.appVersion,
-        wak: Oid.wak,
+        wak: Oid.wak || "",
         timeStamp: new Date().getTime().toString(),
     };
 }
@@ -576,11 +576,11 @@ export function dynaPush(funcParam = {
  * @param cbUrl 重定向链接字符串
  * @returns {string}
  */
-export function wxAuthorizedUrl(appId, apiDomain, cbUrl) {
+export function wxAuthorizedUrl(appId, redirectUri, cbUrl) {
     // 微信授权登录链接
-    const wxAuthorizedLink = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${appId}&redirect_uri=${encodeURIComponent(apiDomain)}%2Fwx%2Fprocess%2Flogin%2F${encodeURIComponent(Base64.btoa(cbUrl))}&response_type=code&scope=snsapi_userinfo&state=test&connect_redirect=1#wechat_redirect`;
+    const wxAuthorizedLink = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${appId}&redirect_uri=${encodeURIComponent(redirectUri)}%2Fwx%2Fprocess%2Flogin%2F${encodeURIComponent(Base64.btoa(cbUrl))}&response_type=code&scope=snsapi_userinfo&state=test&connect_redirect=1#wechat_redirect`;
 
-    return `${apiDomain}/wx/process/toUrl?url=${encodeURIComponent(wxAuthorizedLink)}`;
+    return `${redirectUri}/wx/process/toUrl?url=${encodeURIComponent(wxAuthorizedLink)}`;
 }
 
 // 检测是否获取用户信息

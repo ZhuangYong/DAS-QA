@@ -162,7 +162,7 @@ module.exports = {
 
         // 打开浏览器
         new OpenBrowserPlugin({
-            url: 'http://test.wx.tnyxg.cn:81?wak=hgrueaIHIAPEWI'
+            url: 'http://test.wx.tnyxg.cn:81/m/qa?wak=hgrueaIHIAPEWI'
         })
     ]
 };

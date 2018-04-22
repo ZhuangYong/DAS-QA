@@ -36,13 +36,24 @@ export function qaExams(data, headers) {
     };
 }
 
-export function qaExamItems(data, headers) {
+export function qaExamItems(data, headers, success, fail) {
     const url = sysConfig.apiDomain + apiUrl.API_QA_EXAMS_ITEMS;
     return (dispatch) => {
         comFetch(dispatch, data, {
             url: url,
             headers: headers,
             action: ActionTypes.QA.API_QA_EXAMS_ITEMS
-        }, null);
+        }, success, fail);
+    };
+}
+
+export function qaExamDo(data, headers, success, fail) {
+    const url = sysConfig.apiDomain + apiUrl.API_QA_EXAMS_DO;
+    return (dispatch) => {
+        comFetch(dispatch, data, {
+            url: url,
+            headers: headers,
+            action: ActionTypes.QA.API_QA_EXAMS_DO
+        }, success, fail);
     };
 }

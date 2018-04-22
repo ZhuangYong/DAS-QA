@@ -3,23 +3,26 @@ import {connect} from "react-redux";
 import {withRouter} from "react-router-dom";
 import BaseComponent from "../../components/common/BaseComponent";
 import "../../../sass/common/Scroller.scss";
-import {RaisedButton, Snackbar} from "material-ui";
+import {Snackbar} from "material-ui";
 import {RadioButton, RadioButtonGroup} from 'material-ui/RadioButton';
+import Checkbox from 'material-ui/Checkbox';
 import {bindActionCreators} from "redux";
 import Const from "../../utils/const";
-import intl from 'react-intl-universal';
-import {qaDetail, qaExamItems, qaExams} from "../../actions/qa";
+import {qaDetail, qaExamDo, qaExamItems, qaExams} from "../../actions/qa";
 import {reqHeader} from "../../utils/comUtils";
-import {Card, CardActions, CardHeader, CardMedia, CardTitle, CardText} from 'material-ui/Card';
+import {Card, CardActions, CardMedia, CardText, CardTitle} from 'material-ui/Card';
 import FlatButton from 'material-ui/FlatButton';
 import logoTitle from "../../../img/qa/logo_w1@3x.png";
+import logoBottom from "../../../img/qa/logo_w2@3x.png";
+import detailBg from "../../../img/qa/detail_bg_560@3x.png";
 
 class Detail extends BaseComponent {
     constructor(props) {
         super(props);
-        super.title(intl.get("title.home"));
         this.state = {
             pageData: [],
+            tempExamItems: {},
+            tempExamItemsChecked: {},
             pageIndex: 0,
             showMsg: false,
             msgText: '',
@@ -31,6 +34,13 @@ class Detail extends BaseComponent {
         this.nextStep = this.nextStep.bind(this);
         this.preStep = this.preStep.bind(this);
         this.detailStep = this.detailStep.bind(this);
+        this.checkChange = this.checkChange.bind(this);
+        this.checkBoxCheckChange = this.checkBoxCheckChange.bind(this);
+        this.getDefaultSelected = this.getDefaultSelected.bind(this);
+        this.getDefaultChecked = this.getDefaultChecked.bind(this);
+        this.getCurrentExam = this.getCurrentExam.bind(this);
+        this.submitExam = this.submitExam.bind(this);
+        this.showMsg = this.showMsg.bind(this);
     }
 
     componentDidMount() {
@@ -39,20 +49,34 @@ class Detail extends BaseComponent {
 
     componentDidUpdate(preProps) {
         if (preProps.qa.qaExamsStamp !== this.props.qa.qaExamsStamp || preProps.qa.qaDetailStamp !== this.props.qa.qaDetailStamp) {
-            const {qaExams = [], qaDetail = {}} = this.props.qa;
+            const {qaExams, qaDetail} = this.props.qa;
             this.setState({
-                pageData: [qaDetail, ...qaExams],
+                pageData: [qaDetail || {}, ...(qaExams || [])],
+            });
+            super.title(qaDetail.title);
+        }
+        if (preProps.qa.qaExamItemsStamp !== this.props.qa.qaExamItemsStamp) {
+            const {qaExamItems = []} = this.props.qa;
+            this.state.tempExamItems[qaExamItems[0].examId] = qaExamItems;
+            this.setState({
+                tempExamItems: this.state.tempExamItems
             });
         }
     }
 
     render() {
         const detail = this.props.qa.qaDetail || {};
+        const detailLoaded = (parseInt(detail.id, 10) === parseInt(this.props.match.params.id, 10));
+        const currentExam = this.state.pageData[this.state.pageIndex];
+        const {examId} = currentExam || {};
         return (
             <div>
                 <div>
                     {
-                        this.state.pageIndex === 0 ? <Card className="qa-detail">
+                        !detailLoaded ? this.getLoading() : ""
+                    }
+                    {
+                        this.state.pageIndex === 0 && detailLoaded ? <Card className="qa-detail">
                             <CardTitle title={<div className="qa-title">
                                 {detail.title}
                             </div>} subtitle={
@@ -66,9 +90,13 @@ class Detail extends BaseComponent {
                                     </div>
                                 </div>
                             } />
-                            <CardMedia>
-                                <img src="images/nature-600-337.jpg" alt="" />
-                            </CardMedia>
+                            {
+                                <CardMedia className="thumb-img">
+                                    {
+                                        detail.thumbUrl ? <img src={"http://yqdz.oss-cn-beijing.aliyuncs.com/" + detail.thumbUrl} onError={e => e.target.src = detailBg}/> : <img src={detailBg}/>
+                                    }
+                                </CardMedia>
+                            }
                             <CardText className="txt-introduction">
                                 <font>活动简介：</font>{detail.introduction}
                             </CardText>
@@ -81,51 +109,76 @@ class Detail extends BaseComponent {
                             <CardActions className="qa-buttons">
                                 <FlatButton backgroundColor={this.getBackgroundColor(detail)} className={`status-${this.getStatus(detail)}`} label={this.getStatusStr(detail)} onClick={this.nextStep}/>
                             </CardActions>
+                            <CardText>
+                                <img src={logoBottom} style={{width: '50%', marginLeft: '25%'}}/>
+                            </CardText>
                         </Card> : ""
                     }
                     {
                         this.state.pageIndex !== 0 && this.state.pageData.length > 1 ? <Card className="qa-detail">
+                            <CardText className="txt-win-way">
+                                <div dangerouslySetInnerHTML={{__html: currentExam.content}} />
+                            </CardText>
                             <CardTitle title={<div className="qa-title">
-                                {this.state.pageData[this.state.pageIndex].title}
-                            </div>} subtitle={
-                                <div className="sub-title">
-                                    <img className="logo-title" src={logoTitle}/>
-                                    <div>
-                                        发布者：{detail.name}
-                                    </div>
-                                    <div>
-                                        发布时间：{(detail.createTime || "").replace(/-/g, "/").split(" ")[0]}
-                                    </div>
-                                </div>
-                            } />
-                            <RadioButtonGroup name="shipSpeed" defaultSelected="not_light">
-                                <RadioButton
-                                    iconStyle={{color: "red"}}
-                                    className="item-radio"
-                                    value="light"
-                                    label="Simple"
-                                />
-                                <RadioButton
-                                    className="item-radio"
-                                    value="not_light"
-                                    label="Selected by default"
-                                />
-                            </RadioButtonGroup>
+                                {`(${this.state.pageIndex}/${this.state.pageData.length - 1})`}{currentExam.title}
+                            </div>}/>
+                            {
+                                !this.state.loading && currentExam && !currentExam.multiSelect ? <RadioButtonGroup name="shipSpeed" key={currentExam.examId} defaultSelected={this.getDefaultSelected()} onChange={this.checkChange}>
+                                    {
+                                        this.getStepExamItems().map(item => {
+                                            return <RadioButton
+                                                key={item.itemId}
+                                                className="item-radio"
+                                                value={item.itemId}
+                                                label={<div style={{fontSize: '.38rem'}}>
+                                                    <font color="#808080">{item.orderNo}.</font> {item.title}
+                                                    </div>}
+                                            />;
+                                        })
+                                    }
+                                </RadioButtonGroup> : ""
+                            }
+                            {
+                                !this.state.loading && currentExam && currentExam.multiSelect ? <div>
+                                    {
+                                        this.getStepExamItems().map(item => {
+                                            return <Checkbox
+                                                key={item.itemId}
+                                                className="item-radio"
+                                                value={item.itemId}
+                                                onCheck={this.checkBoxCheckChange}
+                                                defaultChecked={this.getDefaultChecked(item.itemId)}
+                                                label={<div style={{fontSize: '.38rem'}}>
+                                                    <font color="#808080">{item.orderNo}.</font> {item.title}
+                                                </div>}
+                                            />;
+                                        })
+                                    }
+                                </div> : ""
+                            }
+                            {
+                                this.state.loading ? <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>{this.getLoading()}</div> : ""
+                            }
+
                             <CardActions className="qa-buttons">
                                 {
-                                    this.state.pageIndex === 1 ? <FlatButton className="status-1" label="返回" onClick={this.detailStep}/> : ""
+                                    this.state.pageIndex === 1 ? <FlatButton className="status-0" label="返回" onClick={this.detailStep}/> : ""
                                 }
                                 {
-                                    this.state.pageIndex > 1 ? <FlatButton className="status-1" label="上一题" onClick={this.preStep}/> : ""
+                                    this.state.pageIndex > 1 ? <FlatButton className="status-0" label="上一题" onClick={this.preStep}/> : ""
                                 }
                                 {
-                                    this.state.pageData.length - 1 === this.state.pageIndex ? <FlatButton className="status-1"
-                                                                                                      label="提交"/> : <FlatButton className="status-1"
-                                                                                                                                 onClick={this.nextStep}
-                                                                                                                                 label="继续"/>
+                                    this.state.pageData.length - 1 === this.state.pageIndex ? <FlatButton className="status-0"
+                                                                                                          onClick={this.submitExam}
+                                                                                                          label={this.state.loading ? this.getLoading() : "提交"}/> : <FlatButton className="status-0"
+                                                                                                                                     onClick={this.nextStep}
+                                                                                                                                     label="继续"/>
                                 }
 
                             </CardActions>
+                            <CardText>
+                                <img src={logoBottom} style={{width: '50%', marginLeft: '25%'}}/>
+                            </CardText>
                         </Card> : ""
                     }
                 </div>
@@ -159,12 +212,21 @@ class Detail extends BaseComponent {
 
         }
     }
+
+    /**
+     * 从接口获取问卷详情
+     */
     getQaDetail() {
         const {id} = this.props.match.params;
         this.props.actionQaDetail({id: id}, reqHeader({}), res => {
             this.getQaExams(res.exams);
         });
     }
+
+    /**
+     * 从接口获取题目
+     * @param ids
+     */
     getQaExams(ids) {
         ids && this.props.actionQaExams({ids: ids}, reqHeader({}));
     }
@@ -177,16 +239,24 @@ class Detail extends BaseComponent {
                 return "尚未开始";
             case 3:
                 return "已结束";
+            case 4:
+                return "已参加";
             default: return "未确定";
 
         }
     }
 
+    /**
+     * 计算问卷状态 1：进行中，2：未开始，3：已经结束，4：已经做过，5：其他
+     * @param detail
+     * @returns {number}
+     */
     getStatus(detail = {}) {
-        const {startTime, endTime} = detail;
-        if (!startTime || !endTime) return 4;
-        const s = new Date(startTime.replace("-", "/")).getTime();
-        const e = new Date(endTime.replace("-", "/")).getTime();
+        const {startTime, endTime, userExamItemId} = detail;
+        if (userExamItemId) return 4;
+        if (!startTime || !endTime) return 5;
+        const s = new Date(startTime.replace(/-/g, "/")).getTime();
+        const e = new Date(endTime.replace(/-/g, "/")).getTime();
         const n = new Date().getTime();
         if (n > s && n < e) {
            return 1;
@@ -197,27 +267,190 @@ class Detail extends BaseComponent {
         }
     }
 
+    /**
+     * 进入下一题
+     */
     nextStep() {
+        if (this.getStatus(this.props.qa.qaDetail) !== 1) return;
+        if (this.state.pageIndex > 0 && !this.state.tempExamItemsChecked[this.state.pageData[this.state.pageIndex].examId]) {
+            this.showMsg("不能跳过答题！");
+            return;
+        }
         if (this.state.pageData.length > 1) {
             if (this.state.pageIndex < this.state.pageData.length) {
+                const pageIndex = this.state.pageIndex + 1;
                 this.setState({
-                    pageIndex: this.state.pageIndex + 1
+                    pageIndex: pageIndex
                 });
+                const examItem = this.state.pageData[pageIndex];
+                const {examId} = examItem;
+                if (!this.state.tempExamItems[examId]) {
+                    this.setState({loading: true});
+                    this.props.actionQaExamItems({id: examId}, reqHeader({}), res => {
+                        this.setState({loading: false});
+                    }, err => {
+                        this.setState({loading: false});
+                    });
+                }
+                document.querySelector("html").scrollTop = 0;
             }
         }
     }
 
+    /**
+     * 上一题
+     */
     preStep() {
         if (this.state.pageIndex !== 1) {
             this.setState({
                 pageIndex: this.state.pageIndex - 1
             });
         }
+        document.querySelector("html").scrollTop = 0;
     }
+
+    /**
+     * 进入问卷详情
+     */
     detailStep() {
         this.setState({
             pageIndex: 0
         });
+    }
+
+    /**
+     * 获取当前题目
+     * @returns {*}
+     */
+    getCurrentExam() {
+        const pageIndex = this.state.pageIndex;
+        return this.state.pageData[pageIndex];
+    }
+
+    /**
+     * 获取题目对应选项
+     * @returns {*|Array}
+     */
+    getStepExamItems() {
+        const pageIndex = this.state.pageIndex;
+        const examItem = this.state.pageData[pageIndex];
+        const {examId} = examItem;
+        return this.state.tempExamItems[examId] || [];
+    }
+
+    /**
+     * 获取默认选项
+     * @returns {*}
+     */
+    getDefaultSelected() {
+        const pageIndex = this.state.pageIndex;
+        const examItem = this.state.pageData[pageIndex];
+        const {examId} = examItem;
+        return this.state.tempExamItemsChecked[examId];
+    }
+
+    /**
+     * 获取默认选项，多选框
+     * @param examId
+     * @param itemId
+     * @returns {boolean}
+     */
+    getDefaultChecked(itemId) {
+        const {examId} = this.getCurrentExam();
+        const v = (this.state.tempExamItemsChecked[examId] || "");
+        return v.split(",").some(v => v + "" === itemId + "");
+    }
+
+    /**
+     * 单选框选择变化
+     * @param e
+     * @param v
+     */
+    checkChange(e, v) {
+        const pageIndex = this.state.pageIndex;
+        const examItem = this.state.pageData[pageIndex];
+        const {examId} = examItem;
+        this.state.tempExamItemsChecked[examId] = v;
+    }
+
+    /**
+     * 多选框选择变化
+     * @param e
+     * @param b
+     */
+    checkBoxCheckChange(e, b) {
+        const pageIndex = this.state.pageIndex;
+        const examItem = this.state.pageData[pageIndex];
+        const {examId} = examItem;
+        const ov = this.state.tempExamItemsChecked[examId] || "";
+        const v = e.currentTarget.value;
+        if (b) {
+            let ovs = ov.split(",");
+            if (!ovs.some(iv => iv === v)) {
+                ovs.push(v);
+                this.state.tempExamItemsChecked[examId] = ovs.join(",");
+            }
+        } else {
+            this.state.tempExamItemsChecked[examId] = ov.split(",").filter(i => i !== v).join(",");
+        }
+        if (this.state.tempExamItemsChecked[examId].indexOf(",") === 0) this.state.tempExamItemsChecked[examId] = this.state.tempExamItemsChecked[examId].substr(1);
+        this.setState({
+            tempExamItemsChecked: this.state.tempExamItemsChecked
+        });
+    }
+
+    /**
+     * 提交问卷
+     */
+    submitExam() {
+        if (this.state.loading) return;
+        let answers = [];
+        const {id: qaId} = this.props.qa.qaDetail;
+        this.setState({loading: true});
+        this.state.pageData.map(exam => {
+            const {examId, contentId} = exam;
+            let v = this.state.tempExamItemsChecked[examId];
+            if (v) {
+                v = v + "";
+                if (v.indexOf(",") > 0) {
+                    v.split(",").map(iv => {
+                        const answer = {questionnaireId: qaId, examid: examId, itemid: parseInt(iv, 10), contentid: contentId};
+                        answers.push(answer);
+                    });
+                } else {
+                    const answer = {questionnaireId: qaId, examid: examId, itemid: parseInt(v, 10), contentid: contentId};
+                    answers.push(answer);
+                }
+            }
+        });
+        this.props.actionQaExamDo({answers: JSON.stringify(answers)}, reqHeader({}), res => {
+            // this.setState({
+            //     loading: false,
+            // });
+            const {config = []} = this.state.pageData[0];
+            const score = (config.find(c => c.config === "faqs") || {}).configValue;
+            this.showMsg(`提交成功，感谢参与，已获得${score}积分！`);
+            setTimeout(() => {
+                location.reload();
+            }, 1000);
+        }, err => {
+            this.setState({
+                loading: false,
+            });
+            this.showMsg(`提交失败${err ? ":" + err : ""}，请稍后重试！`);
+        });
+    }
+    showMsg(msg) {
+        this.setState({
+            barrageToastMsg: msg,
+            barrageSendToast: true
+        });
+    }
+
+    getLoading() {
+        return <svg className="rotate loading-rotate" viewBox="0 0 40 40">
+            <circle className="loading-circle" cx="20" cy="20" r="18.25" fill="none" strokeWidth="3.5" strokeMiterlimit="20"/>
+        </svg>;
     }
 }
 
@@ -233,6 +466,7 @@ const mapDispatchToProps = (dispatch, ownProps) => {
         actionQaDetail: bindActionCreators(qaDetail, dispatch),
         actionQaExams: bindActionCreators(qaExams, dispatch),
         actionQaExamItems: bindActionCreators(qaExamItems, dispatch),
+        actionQaExamDo: bindActionCreators(qaExamDo, dispatch),
     };
 };
 

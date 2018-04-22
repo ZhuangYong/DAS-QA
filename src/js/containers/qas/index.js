@@ -13,7 +13,6 @@ import {linkTo, reqHeader} from "../../utils/comUtils";
 import {List, Snackbar} from "material-ui";
 import {bindActionCreators} from "redux";
 import Const from "../../utils/const";
-import intl from 'react-intl-universal';
 import {qaList} from "../../actions/qa";
 
 const style = {
@@ -99,7 +98,7 @@ const style = {
 class Home extends BaseComponent {
     constructor(props) {
         super(props);
-        super.title(intl.get("title.home"));
+        super.title("问卷调查");
         this.state = {
             defaultBack: '/',
             showMsg: false,
@@ -127,7 +126,7 @@ class Home extends BaseComponent {
             const {data, totalPage, currentPage} = qaList;
             this.setState({
                 pageData: [...this.state.pageData, ...(data || [])],
-                lastPage: totalPage !== currentPage,
+                lastPage: totalPage === currentPage,
                 loading: false
             });
         }
@@ -157,18 +156,15 @@ class Home extends BaseComponent {
 
                         <div className="loading-bottom">
                             <div>
-                                <svg className="rotate" viewBox="0 0 40 40" style={{display: loading ? "" : "none", ...style.loadingRotate}}>
-                                    <circle cx="20" cy="20" r="18.25" fill="none" strokeWidth="3.5" strokeMiterlimit="20" style={style.loadingRotate.loadingCircle}/>
+                                <svg className="rotate loading-rotate" viewBox="0 0 40 40" style={{display: loading ? "" : "none"}}>
+                                    <circle className="loading-circle" cx="20" cy="20" r="18.25" fill="none" strokeWidth="3.5" strokeMiterlimit="20"/>
                                 </svg>
                                 <span>
                                     {
-                                        loading ? intl.get("song.loading") : ""
+                                        loading ? "正在加载" : ""
                                     }
                                     {
-                                        lastPage ? intl.get("song.list.end") : ""
-                                    }
-                                    {
-                                        !loading ? intl.get("msg.network.die") : ""
+                                        lastPage ? "无更多数据" : ""
                                     }
                                 </span>
                             </div>
@@ -250,7 +246,7 @@ class Home extends BaseComponent {
     getRecommendSongsContent() {
         const pageData = this.state.pageData;
         return pageData.map(item => (
-            <Card key={item.id} className="qa-item" onClick={() => linkTo("qa/" + item.id, false, "")}>
+            <Card key={item.id} className="qa-item" onClick={() => linkTo("qa/exam/" + item.id, false, "")}>
                 <CardTitle title={<div className="qa-title">
                     {item.title}
                 </div>} subtitle={
@@ -289,8 +285,8 @@ class Home extends BaseComponent {
         }
     }
     getStatus(startTime, endTime) {
-        const s = new Date(startTime.replace("-", "/")).getTime();
-        const e = new Date(endTime.replace("-", "/")).getTime();
+        const s = new Date(startTime.replace(/-/g, "/")).getTime();
+        const e = new Date(endTime.replace(/-/g, "/")).getTime();
         const n = new Date().getTime();
         if (n > s && n < e) {
            return 1;

@@ -1,11 +1,11 @@
 @import "common/variables";
 @import "common/base";
 @import "qa";
+@import "punch";
 
 .no-border {
     border: none !important;
 }
-
 .song-list {
     .song-item {
         padding-top: .16rem !important;
@@ -205,16 +205,6 @@ input, textarea {
         }
     }
 }
-
-.img-not-loaded {
-    overflow: hidden;
-    background-image: url('../img/common/blank.png');
-    background-repeat: no-repeat;
-    background-size: auto 2rem;
-    background-color: rgb(234, 234, 234);
-    background-position: center center;
-}
-
 .dialog-panel {
     & > div * {
         font-size: .4rem !important;
@@ -354,4 +344,17 @@ input, textarea {
 .payCircle{
     width: .8rem!important;
     height: .8rem!important;
+}
+
+.loading-rotate{
+    width: .42rem;
+    height: .42rem;
+    position: relative;
+    .loading-circle{
+        stroke: #FF9800;
+        stroke-linecap: round;
+        transition: all 850ms ease-in-out 0ms;
+        stroke-dasharray: 80, 114;
+        stroke-dashoffset: -403.668;
+    }
 }

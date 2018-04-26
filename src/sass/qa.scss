@@ -1,6 +1,16 @@
 $title-color: #666666;
 $sub-title-color: #999999;
 $button-color: rgb(253, 178, 16);
+
+.detail-page{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    left: 0;
+    top: 0;
+}
 .qa-list{
     padding: 0!important;
     .qa-item{

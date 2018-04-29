@@ -70,7 +70,7 @@ class Detail extends BaseComponent {
         const currentExam = this.state.pageData[this.state.pageIndex];
         const {examId} = currentExam || {};
         return (
-            <div>
+            <div className="detail-page">
                 <div>
                     {
                         !detailLoaded ? this.getLoading() : ""
@@ -228,7 +228,7 @@ class Detail extends BaseComponent {
      * @param ids
      */
     getQaExams(ids) {
-        ids && this.props.actionQaExams({ids: ids}, reqHeader({}));
+        this.props.actionQaExams({ids: ids}, reqHeader({}));
     }
 
     getStatusStr(detail = {}) {
@@ -292,8 +292,10 @@ class Detail extends BaseComponent {
                         this.setState({loading: false});
                     });
                 }
-                document.querySelector("html").scrollTop = 0;
+                document.querySelector(".detail-page").scrollTop = 0;
             }
+        } else {
+            this.showMsg("答题准备中！");
         }
     }
 
@@ -306,7 +308,7 @@ class Detail extends BaseComponent {
                 pageIndex: this.state.pageIndex - 1
             });
         }
-        document.querySelector("html").scrollTop = 0;
+        document.querySelector(".detail-page").scrollTop = 0;
     }
 
     /**

@@ -71,6 +71,7 @@ export function comFetch(dispatch, param, options = {
         fetchOption.headers = options.headers;
         fetchOption.headers.localUrl = location.href;
     }
+    fetchOption.headers = Object.assign({}, fetchOption.headers, {token: window.sessionStorage.getItem("token")});
 
     if (options.timeout) {
         fetchOption.timeout = options.timeout;

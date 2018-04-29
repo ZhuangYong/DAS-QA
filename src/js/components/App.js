@@ -98,6 +98,7 @@ class App extends BaseComponent {
             const {userInfoData} = this.props.userInfo;
             window.sessionStorage.setItem("wxInfo", JSON.stringify(userInfoData));
             if (userInfoData) {
+                window.sessionStorage.setItem("token", userInfoData.token);
                 this.removeAppLoading();
                 // this.configWxPath();
             }

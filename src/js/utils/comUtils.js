@@ -6,6 +6,10 @@ import navUtils from "./navUtils";
 import ActionTypes from "../actions/actionTypes";
 import Base64 from "Base64";
 
+export function parseSimpleTime(time) {
+    return parseTime(time, '{y}-{m}-{d}');
+}
+
 /**
  * 返回特定格式时间字符串
  * @param time

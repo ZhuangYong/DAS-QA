@@ -10,9 +10,10 @@ import {bindActionCreators} from "redux";
 import Const from "../../utils/const";
 import {qaDetail} from "../../actions/qa";
 import {getUserSignInInfo, getUserScore, userSignIn} from "../../actions/userActions";
-import {parseTime, reqHeader} from "../../utils/comUtils";
+import {parseSimpleTime, parseTime, reqHeader} from "../../utils/comUtils";
 
-const SETP_SCORE = 2;
+const STEP_SCORE = 2;
+const DAY_NUM = ["一", "二", "三", "四", "五", "六", "七"];
 class SignIn extends BaseComponent {
     constructor(props) {
         super(props);
@@ -41,13 +42,14 @@ class SignIn extends BaseComponent {
     render() {
         const todayScore = parseInt(this.getTodayScore() || 0, 10);
         const yesterdayScore = parseInt(this.getYesterdayScore() || 0, 10);
-        const continueCount = ((todayScore || yesterdayScore) - 5) / 2;
+        console.log(todayScore);
+        const continueCount = (todayScore || yesterdayScore) ? ((todayScore || yesterdayScore) - 5) / 2 + 1 : 0;
         const todayDay = new Date().getDay();
         let signTip = "";
         if (todayScore) {
-            signTip = `明日签到可领取${todayDay === 7 ? 5 : todayScore + SETP_SCORE}积分`;
+            signTip = `明日签到可领取${todayDay === 7 ? 5 : todayScore + STEP_SCORE}积分`;
         } else {
-            signTip = `今日签到可领取${todayDay === 1 ? 5 : yesterdayScore + SETP_SCORE}积分`;
+            signTip = `今日签到可领取${todayDay === 1 ? 5 : yesterdayScore + STEP_SCORE}积分`;
         }
         return (
             <div>
@@ -112,7 +114,7 @@ class SignIn extends BaseComponent {
                             </p>
                         </CardText>
                         <CardActions className="bottom-buttons">
-                            <RaisedButton label="进入积分福利社" backgroundColor="#2d73c9" labelColor="#ffffff" className="jump-button"/>
+                            <RaisedButton label="进入积分福利社" backgroundColor="#2d73c9" labelColor="#ffffff" className="jump-button" onClick={() => location.href = "/dasapp/integral/giftPage"}/>
                         </CardActions>
                     </Card>
                 </div>
@@ -142,19 +144,18 @@ class SignIn extends BaseComponent {
     renderDays() {
         let days = [];
         for (let i = 0; i < 7; i++) {
-            const signInDay = this.state.signIns.find(p => p.createTime.replace(/-/g, "/").replace(/\/0/g, "/").indexOf(this.getWeek(i)) >= 0);
-            const dayNum = ["一", "二", "三", "四", "五", "六", "七"];
+            const signInDay = this.state.signIns.find(p => p.createTime.split(" ")[0].replace(/-/g, "/").replace(/\/0/g, "/").indexOf(this.getWeek(i)) >= 0);
             if (signInDay) {
-                days.push(this.getDays(signInDay.score ? "+" + signInDay.score : "签", "星期" + dayNum[i]), i);
+                days.push(this.getDaysStr(signInDay.score ? "+" + signInDay.score : "签", "星期" + DAY_NUM[i]));
             } else {
-                days.push(this.getDays("签", "星期" + dayNum[i]), i);
+                days.push(this.getDaysStr("签", "星期" + DAY_NUM[i]));
             }
         }
         return days;
     }
 
     getTodayScore() {
-        const signInToday = this.state.signIns.find(p => parseTime(p.createTime, '{y}-{m}-{d}') === parseTime(new Date(this.getWeek(new Date().getDay() - 1)), '{y}-{m}-{d}'));
+        const signInToday = this.state.signIns.find(p => parseSimpleTime(p.createTime.split(" ")[0]) === parseSimpleTime(new Date(this.getWeek(new Date().getDay() - 1))));
         if (signInToday && signInToday.score) return parseInt(signInToday.score, 10);
         return 0;
     }
@@ -162,13 +163,13 @@ class SignIn extends BaseComponent {
     getYesterdayScore() {
         const day = new Date().getDay();
         if (day === 1) return 0;
-        const signInYesterday = this.state.signIns.find(p => parseTime(p.createTime, '{y}-{m}-{d}') === parseTime(new Date(this.getWeek(day - 2)), '{y}-{m}-{d}'));
+        const signInYesterday = this.state.signIns.find(p => parseSimpleTime(p.createTime.split(" ")[0]) === parseSimpleTime(new Date(this.getWeek(day - 2))));
         if (signInYesterday && signInYesterday.score) return parseInt(signInYesterday.score, 10);
         return 0;
     }
 
-    getDays(msg1, msg2, index) {
-        const current = new Date().getDay() - 1 === index;
+    getDaysStr(msg1, msg2) {
+        const current = DAY_NUM.indexOf(msg2.replace("星期", "")) === new Date().getDay() - 1;
         return <div className="day-check-item" key={msg2}>
                     <span>
                         <FloatingActionButton mini={true}>

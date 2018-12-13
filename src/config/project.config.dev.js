@@ -6,11 +6,8 @@
 module.exports = {
     appVersion: '1.0.0', // 版本号
     environment: 'test',
-    apiDomain: 'http://test.wx.tnyxg.cn',
+    // apiDomain: 'http://test.wx.tnyxg.cn',
+    apiDomain: 'http://yqdz.tnyxg.cn',
     contextPath: "/",
-    // mallIndex: 'https://jmake.haitai.tv/haitai-weisite/shop/index',
-    // mallOrder: 'https://jmake.haitai.tv/haitai-weisite/shop/order_list',
-    mallIndex: 'https://jmake.huo.so/shop/index',
-    mallOrder: 'https://jmake.huo.so/shop/order_list',
-    appId: "wx4688d2b7b85451aa"
+    appId: "wx8ddc97f9071b93f3"
 };

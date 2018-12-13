@@ -3,6 +3,7 @@
   "version": "2.2.7",
   "private": true,
   "dependencies": {
+    "@material-ui/core": "^1.1.0",
     "Base64": "^1.0.1",
     "bundle-loader": "^0.5.5",
     "cropper": "^3.0.0-rc.3",
@@ -131,7 +132,7 @@
     }
   },
   "scripts": {
-    "dev": "npm run copy:dev && cross-env NODE_ENV=development webpack-dev-server --env=dev --inline --content-base ./build --config ./src/config/webpack.config.js --port 81 --host test.wx.tnyxg.cn --history-api-fallback",
+    "dev": "npm run copy:dev && cross-env NODE_ENV=development webpack-dev-server --env=dev --inline --content-base ./build --config ./src/config/webpack.config.js --port 81 --host yqdz.tnyxg.cn --history-api-fallback",
     "build:pre": "npm run copy:dev && cross-env NODE_ENV=pre webpack --config ./src/config/webpack.config.js --env=prod.pre",
     "正式发布编译": "npm run copy:dev && cross-env NODE_ENV=production webpack --config ./src/config/webpack.config.js --env=prod",
     "eslint": "eslint -c ./src/config/.eslintrc.js --ignore-path ./src/config/.eslintignore --ext .js ./src",

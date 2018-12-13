@@ -34,6 +34,29 @@ export function getUserInfo(data, headers, callback) {
     };
 }
 
+export function login(data, headers, callback, fail) {
+    const url = sysConfig.apiDomain + apiUrl.API_GET_USER_LOGIN;
+    return (dispatch) => {
+        comFetch(dispatch, data, {
+            url: url,
+            type: "post",
+            headers: headers,
+            action: ActionTypes.USER.API_GET_USER_LOGIN
+        }, callback, fail);
+    };
+}
+
+export function wxInfo(data, headers, callback) {
+    const url = sysConfig.apiDomain + apiUrl.API_GET_USER_WX_INFO;
+    return (dispatch) => {
+        comFetch(dispatch, data, {
+            url: url,
+            type: "post",
+            headers: headers,
+            action: ActionTypes.USER.API_GET_USER_WX_INFO
+        }, callback);
+    };
+}
 export function getUserScore(data, headers, callback) {
     const url = sysConfig.apiDomain + apiUrl.API_GET_USER_SCORE;
     return (dispatch) => {

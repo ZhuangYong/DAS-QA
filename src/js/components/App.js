@@ -62,9 +62,12 @@ class App extends BaseComponent {
     }
 
     componentDidMount() {
-        if (isGetUserInfo()) {
+        const location = this.props.location;
+        console.log(location);
+        if (isGetUserInfo(location)) {
             this.updateUserInfo();
         } else {
+            this.removeAppLoading();
             window.noUserInfo = true;
         }
         window.addEventListener('resize', this.sizeChange);
@@ -73,7 +76,7 @@ class App extends BaseComponent {
             wxShare({
                 title: "一汽大众·问卷",
                 desc: "挑战自我，不断创新，开创未来",
-                link: wxAuthorizedUrl(sysConfig.appId, sysConfig.apiDomain, location.protocol + "//" + location.host),
+                link: wxAuthorizedUrl(sysConfig.appId, sysConfig.apiDomain, window.location.protocol + "//" + window.location.host),
                 imgUrl: "http://img1.gtimg.com/fj/pics/hv1/95/18/1678/109116635.png",
                 dataUrl: null
             });
@@ -88,7 +91,7 @@ class App extends BaseComponent {
     }
 
     componentDidUpdate(prevProps) {
-        if (isGetUserInfo()) {
+        if (isGetUserInfo(this.props.location)) {
             if (window.noUserInfo === true) {
                 this.updateUserInfo();
                 window.noUserInfo = false;
@@ -118,9 +121,7 @@ class App extends BaseComponent {
             this.state.initDone ? <div>
                 <MuiThemeProvider className={"App"} muiTheme={getMuiTheme(lightBaseTheme)}>
                     <div className={`${this.state.showDialog ? "show-alert" : ""}`}>
-                        {
-                            this.props.userInfo.userInfoData ? <Routers/> : ""
-                        }
+                        <Routers/>
                     <Snackbar
                         open={showAlert}
                         bodyStyle={{height: 'auto', minHeight: 48, lineHeight: '.7rem', display: 'flex', alignItems: 'center'}}
@@ -250,7 +251,7 @@ class App extends BaseComponent {
             // }
             // if (wxInfoSession.data && wxInfoSession.data.hasOwnProperty('time')) {
                 const params = {
-                    wak: getQueryString("wak") || ""
+                    wak: getQueryString("wak", this.props.location) || ""
                 };
             //     wxInfo = {
             //         wxId: wxInfoSession.data.uuid || "",

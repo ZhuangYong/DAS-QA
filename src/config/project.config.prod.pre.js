@@ -4,9 +4,9 @@
 
 /*预发布环境配置*/
 module.exports = {
-    appVersion: '1.1.1',
-    environment: 'pre',
-    apiDomain: 'http://portal.j-make.cn/pre',
+    appVersion: '1.0.0', // 版本号
+    environment: 'test',
+    apiDomain: 'http://test.wx.tnyxg.cn',
     contextPath: "/",
-    appId: "wxb948b0bc6e5db6da"
+    appId: "wx8ddc97f9071b93f3"
 };

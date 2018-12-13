@@ -3,6 +3,7 @@ import ActionTypes from "../actions/actionTypes";
 import sysConfig from "../utils/sysConfig";
 import Const from "./const";
 import intl from 'react-intl-universal';
+import {linkTo} from "./comUtils";
 
 export function cryptoFetch(options, succ, fail) {
     let url = options.url;
@@ -63,7 +64,7 @@ export function comFetch(dispatch, param, options = {
 
     let url = options.url;
     let fetchOption = {
-        credentials: 'include',
+        // credentials: 'include',
         method: 'POST'
     };
 
@@ -114,11 +115,16 @@ export function comFetch(dispatch, param, options = {
     // 发起请求
     const rejectCode = Math.random();
     const rejectFun = (err) => {
+        console.log(err);
         const code = err.message;
         let msg = "";
         switch (code) {
             case "503":
                 msg = "网络超时";
+                break;
+            case "fail":
+            case "500":
+                msg = "系统出错，请稍后重试！";
                 break;
             default:
                 msg = code || "网络异常，请稍后重试！";
@@ -157,9 +163,21 @@ export function comFetch(dispatch, param, options = {
         }
         return response.json();
     }).then(function (json) {
-        const {code, msg, data} = json;
-        if (code === 302) window.location.href = data;
-        if (code !== 200 && !/^\/locales\/[a-z-A-Z]*\.json/gi.test(url)) throw Error(code);
+        const {code, message, data} = json;
+        if (code === 302) {
+            // if (data.indexOf(window.location.protocol + "//" + window.location.hostname) === 0 && data.indexOf(window.location.hostname) && data.indexOf(window.location.host) < 0) {
+            //     window.location.href = data.replace(window.location.hostname, window.location.host);
+            // } else {
+            //     window.location.href = data;
+            // }
+
+            window.location.href = data;
+            // if (data.indexOf(window.location.protocol + "//" + window.location.hostname) === 0) {
+            //     window.location.reload();
+            // }
+            return;
+        }
+        if (code !== 200 && !/^\/locales\/[a-z-A-Z]*\.json/gi.test(url)) throw Error(message);
         try {
             dispatch({
                 type: options.action,

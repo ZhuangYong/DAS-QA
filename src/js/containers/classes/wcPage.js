@@ -14,6 +14,7 @@ import {List, Snackbar} from "material-ui";
 import {bindActionCreators} from "redux";
 import Const from "../../utils/const";
 import {qaList} from "../../actions/qa";
+import {classPage} from "../../actions/classes";
 
 const style = {
     home: {
@@ -95,11 +96,13 @@ const style = {
     },
 };
 
-class Home extends BaseComponent {
+class WcPage extends BaseComponent {
     constructor(props) {
         super(props);
-        super.title("问卷调查");
+        const {catelogId, title} = this.props.match.params;
+        super.title(title);
         this.state = {
+            catelogId: parseInt(catelogId, 10),
             pageSize: 20,
             pageData: [],
             loading: false,
@@ -109,6 +112,7 @@ class Home extends BaseComponent {
             scrollTop: 0
         };
         this.getRecommendSongsContent = this.getRecommendSongsContent.bind(this);
+        this.loadMoreAction = this.loadMoreAction.bind(this);
     }
 
     componentDidMount() {
@@ -120,9 +124,9 @@ class Home extends BaseComponent {
 
     componentDidUpdate(preProps) {
         super.componentDidUpdate();
-        if (preProps.qa.qaListStamp !== this.props.qa.qaListStamp) {
-            const qaList = this.props.qa.qaList || {data: [], lastPage: false};
-            const {data, totalPage, currentPage} = qaList;
+        if (preProps.classes.classPageStamp !== this.props.classes.classPageStamp) {
+            const classPage = this.props.classes.classPage || {data: [], lastPage: false};
+            const {data, totalPage, currentPage} = classPage;
             this.setState({
                 pageData: [...this.state.pageData, ...(data || [])],
                 lastPage: totalPage === currentPage,
@@ -220,13 +224,17 @@ class Home extends BaseComponent {
         if (this.state.loading || this.state.lastPage) return;
         const currentPage = this.state.currentPage + 1;
         const pageSize = this.state.pageSize;
-        let param = {currentPage: currentPage, pageSize: pageSize};
-        //个性化推荐
-        this.props.actionQaList(param, reqHeader(param), resolve, () => {});
-        this.setState({
-            currentPage: currentPage,
-            loading: true
-        });
+        const {catelogId} = this.state;
+
+        if (catelogId > 0) {
+            let param = {currentPage, pageSize, catelogId};
+            //个性化推荐
+            this.props.actionClassPage(param, reqHeader(param), resolve, () => {});
+            this.setState({
+                currentPage: currentPage,
+                loading: true
+            });
+        }
     }
 
     /**
@@ -236,72 +244,45 @@ class Home extends BaseComponent {
         const pageData = this.state.pageData;
 
         return pageData.map(item => (
-            <Card key={item.id} className="qa-item" onClick={() => linkTo("qa/exam/" + item.id, false, "")}>
+            <Card key={item.contentId} className="qa-item" onClick={() => window.location.href = item.link}>
                 <CardTitle title={<div className="qa-title">
                     {item.title}
                 </div>} subtitle={
                     <div className="sub-title">
                         <div>
-                            发布者：{item.name}
-                        </div>
-                        <div>
-                            <RaisedButton className="qa-button" label={this.getStatusStr(item.startTime, item.endTime)} style={style} />
+                            <img style={{maxWidth: "100%"}} src={(item.thumbUrl.indexOf("http") === 0 ? "" : "http://yqdz.oss-cn-beijing.aliyuncs.com/") + item.thumbUrl}/>
                         </div>
                     </div>
                 } />
 
                 <Divider/>
                 <CardText className="qa-introduction">
-                    {item.introduction}
+                    {item.description}
                 </CardText>
                 <CardText className="time-set">
-                    <font color="#a9a9a9">问卷时间：</font> {item.startTime.substr(0, 19)} 至 {item.endTime.substr(0, 19)}
+                    <font color="#a9a9a9">发布时间：</font> {item.createTime.substr(0, 19)}
                 </CardText>
             </Card>
             )
         );
     }
 
-    getStatusStr(startTime, endTime) {
-        switch (this.getStatus(startTime, endTime)) {
-            case 1:
-                return "已开始";
-            case 2:
-                return "未开始";
-            case 3:
-                return "已结束";
-            default: return "未确定";
-
-        }
-    }
-    getStatus(startTime, endTime) {
-        const s = new Date(startTime.replace(/-/g, "/").substr(0, 19)).getTime();
-        const e = new Date(endTime.replace(/-/g, "/").substr(0, 19)).getTime();
-        const n = new Date().getTime();
-        if (n > s && n < e) {
-           return 1;
-        } else if (n < s) {
-            return 2;
-        } else if (n > e) {
-            return 3;
-        }
-    }
 }
 
 // 映射state到props
 const mapStateToProps = (state, ownProps) => {
     return {
-        qa: state.app.qa,
+        classes: state.app.classes,
     };
 };
 // 映射dispatch到props
 const mapDispatchToProps = (dispatch, ownProps) => {
     return {
-        actionQaList: bindActionCreators(qaList, dispatch),
+        actionClassPage: bindActionCreators(classPage, dispatch),
     };
 };
 
 export default withRouter(connect(
     mapStateToProps,
     mapDispatchToProps
-)(Home));
+)(WcPage));

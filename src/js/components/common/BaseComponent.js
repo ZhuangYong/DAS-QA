@@ -4,20 +4,66 @@
 
 import {Component} from "react";
 import navUtils from "../../utils/navUtils";
-import {withRouter} from "react-router-dom";
-import {connect} from "react-redux";
-import ActionTypes from "../../actions/actionTypes";
-import intl from "react-intl-universal";
+import {setCookie} from "../../utils/comUtils";
 
 export default class BaseComponent extends Component {
 
     constructor(props) {
         super(props);
+        this.state = {
+            scrollDom: null,
+            scrollTop: 0,
+            cacheTop: 0,
+            cachePageData: null
+        };
         this.bindState.bind(this);
         this.title = this.title.bind(this);
         navUtils.setHistory(this.props.history);
+
+        if (this.props.location.pathname.indexOf("login") < 0) {
+            let currentLocation = this.props.location.pathname;
+            if (currentLocation.indexOf("/") === 0) {
+                currentLocation = currentLocation.substr(1);
+            }
+            setCookie("lastLocation", currentLocation);
+        }
     }
 
+    componentDidMount() {
+        const cacheState = window.sessionStorage.getItem("c_" + this.props.match.url);
+        if (cacheState) {
+            this.state = Object.assign({}, JSON.parse(cacheState));
+            window.sessionStorage.removeItem("c_" + this.props.match.path);
+            this.setState({
+                cacheTop: this.state.scrollTop,
+                cachePageData: this.state.pageData
+            });
+        }
+    }
+    componentWillUnmount() {
+        if (this.state.scrollDom) {
+            this.state.scrollDom.removeEventListener('scroll', this.onScrollHandle.bind(this));
+            window.sessionStorage.setItem("c_" + this.props.match.path, JSON.stringify({
+                scrollTop: this.state.scrollTop,
+                pageData: this.state.pageData,
+                currentPage: this.state.currentPage,
+                lastPage: this.state.lastPage,
+            }));
+        }
+    }
+
+    componentDidUpdate() {
+        if (this.state.cachePageData) {
+            this.setState({
+                pageData: this.state.cachePageData
+            });
+            this.state.cachePageData = null;
+        }
+        if (this.state.cacheTop) {
+            this.refs.qaList.scrollTop = this.state.cacheTop;
+            this.state.cacheTop = 0;
+        }
+    }
     render() {
         return (
             <div/>
@@ -36,159 +82,12 @@ export default class BaseComponent extends Component {
         document.title = title;
     }
 
-    /**
-     * 验证用户是否是绑定了设备、是否vip、是否可以免费激活
-     * 如果任何一个条件不满足将返回false并做出相应的提示
-     * @param userInfoData app.state.userInfo.userInfoData
-     * @param actionSetGlobAlert actions/common/actions.js/setGlobAlert
-     * @returns {*} 如果正在获取用户信息将返回字符串的提示，如果条件都满足将返回true，否则返回false并做出相应的提示
-     */
-    validUserStatus(userInfoData, ottInfo, actionSetGlobAlert) {
-        const {data} = ottInfo || {};
-        const {systemTime, timeStamp} = data || {};
-        const isVip = this.isVip(userInfoData);
-        const isBindDevice = this.isBindDevice(userInfoData);
-        const isFreeActivation = this.isFreeActivation(userInfoData);
-        const ottIsOnLine = () => {
-            if (systemTime && timeStamp) return !(systemTime - timeStamp > 12 * 60 * 1000);
-            return false;
-        };
-        if (typeof isBindDevice === 'string') {
-            actionSetGlobAlert && actionSetGlobAlert(isBindDevice, ActionTypes.COMMON.ALERT_TYPE_BIND_DEVICE);
-            return intl.get("getting.user.info");
-        } else if (isBindDevice === false) {
-            actionSetGlobAlert && actionSetGlobAlert("", ActionTypes.COMMON.ALERT_TYPE_BIND_DEVICE);
-            return false;
-        } else if (isBindDevice === true) {
-            if (ottIsOnLine()) {
-                if (isVip === false) {
-
-                    if (isFreeActivation === true) {
-                        actionSetGlobAlert && actionSetGlobAlert("", ActionTypes.COMMON.ALERT_TYPE_FREE_ACTIVE);
-                        return false;
-                    } else if (isFreeActivation === false) {
-
-                        actionSetGlobAlert && actionSetGlobAlert("", ActionTypes.COMMON.ALERT_TYPE_BE_VIP);
-                        return false;
-                    }
-                } else {
-                    return true;
-                }
-            } else {
-                actionSetGlobAlert && actionSetGlobAlert("", ActionTypes.COMMON.ALERT_TYPE_DEVICE_NOT_ONLINE);
-                return false;
-            }
-        }
+    setScrollDom(dom) {
+        this.state.scrollDom = dom;
+        dom.addEventListener('scroll', this.onScrollHandle.bind(this));
     }
 
-    /**
-     * 验证用户是否是绑定了设备，若没有将返回false并做出相应的提示
-     * @param userInfoData app.state.userInfo.userInfoData
-     * @param actionSetGlobAlert actions/common/actions.js/setGlobAlert
-     * @param noAlert boolean
-     * @returns {*}
-     */
-    validUserBindDevice(userInfoData, actionSetGlobAlert, noAlert) {
-        const isBindDevice = this.isBindDevice(userInfoData);
-        if (typeof isBindDevice === 'string') {
-            !noAlert && actionSetGlobAlert && actionSetGlobAlert(isBindDevice, ActionTypes.COMMON.ALERT_TYPE_BIND_DEVICE);
-            return isBindDevice;
-        } else if (isBindDevice === false) {
-            !noAlert && actionSetGlobAlert && actionSetGlobAlert("", ActionTypes.COMMON.ALERT_TYPE_BIND_DEVICE);
-            return false;
-        } else if (isBindDevice === true) {
-            return true;
-        }
-    }
-
-   validUserDeviceOnline(ottInfo, actionSetGlobAlert) {
-       const {data} = ottInfo || {};
-       const {systemTime, timeStamp} = data || {};
-       if (systemTime && timeStamp) {
-           const online = !(systemTime - timeStamp > 12 * 60 * 1000);
-           if (!online) {
-               actionSetGlobAlert && actionSetGlobAlert("", ActionTypes.COMMON.ALERT_TYPE_DEVICE_NOT_ONLINE);
-               return false;
-           }
-           return true;
-       }
-       actionSetGlobAlert && actionSetGlobAlert("", ActionTypes.COMMON.ALERT_TYPE_DEVICE_NOT_ONLINE);
-       return false;
-    }
-
-    /**
-     * 判断用户是否可以免费激活
-     * @param userInfoData
-     * @returns {*}
-     */
-    isFreeActivation(userInfoData) {
-        const {status, data} = userInfoData || {};
-        if (typeof status !== 'undefined') {
-            const {isFreeActivation} = data;
-            // 是否可以免费激活1（可以）0（不可以）
-            return isFreeActivation === 1;
-        }
-        return intl.get("getting.user.info");
-    }
-
-    /**
-     * 判断用户是否绑定了设备
-     * @param userInfoData
-     * @returns {*}
-     */
-    isBindDevice(userInfoData) {
-        const {status, msg, data} = userInfoData || {};
-        if (typeof status !== 'undefined') {
-            if (status === -100) {
-                return intl.get("user.we.chat.operate");
-            } else if (status === 1) {
-                const {isReDevice, bindExpireTime} = data;
-                //是否绑定设备1（已绑定）2（未绑定设备）3（绑定过期）
-                if (isReDevice === 3) {
-                    return intl.get("bind.expired.re.bind");
-                } else if (isReDevice === 2) {
-                    return intl.get("unbind.device");
-                } else {
-                    return true;
-                }
-            } else {
-                return msg || intl.get("get.user.info.fail.try.again");
-            }
-        }
-        return intl.get("getting.user.info");
-    }
-
-    /**
-     * 判断用户是否是vip
-     * @param userInfoData
-     * @returns {*}
-     */
-    isVip(userInfoData) {
-        const {status, data} = userInfoData || {};
-        if (typeof status !== 'undefined') {
-            const {vipStatus, expireTime} = data;
-            // vip状态-1（从未开通过vip）0（vip已过期）1（在vip有效期）
-            return vipStatus === 1 && new Date().getTime() < expireTime ;
-        }
-        return intl.get("getting.user.info");
-    }
-
-    /**
-     * vip 时间剩余
-     * @param userInfoData
-     * @returns {*}
-     */
-    vipTime(userInfoData) {
-        const {status, data} = userInfoData || {};
-        if (typeof status !== 'undefined') {
-            const {vipStatus, expireTime} = data;
-            // vip状态-1（从未开通过vip）0（vip已过期）1（在vip有效期）
-            if (vipStatus === 1) {
-                return expireTime - new Date().getTime();
-            } else {
-                return '0';
-            }
-        }
-        return intl.get("getting.user.info");
+    onScrollHandle(event) {
+        this.state.scrollTop = event.target.scrollTop;
     }
 }

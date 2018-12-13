@@ -38,7 +38,7 @@ let history = syncHistoryWithStore(browserHistory, store, {
 });
 render(
     <Provider store={store}>
-        <Router history={history}>
+        <Router history={history} onEnter={e => console.log(e)}>
             <App/>
         </Router>
     </Provider>,

@@ -4,11 +4,9 @@
 
 /*正式环境配置*/
 module.exports = {
-    appVersion: '1.1.1', // 版本号
+    appVersion: '1.0.0', // 版本号
     environment: 'product',
-    apiDomain: 'http://test.wx.tnyxg.cn',
+    apiDomain: 'http://yqdz.tnyxg.cn',
     contextPath: "/",
-    mallIndex: 'https://jmake.huo.so/shop/index',
-    mallOrder: 'https://jmake.huo.so/shop/order_list',
-    appId: "wxb948b0bc6e5db6da"
+    appId: "wxbb779a462f76943c"
 };

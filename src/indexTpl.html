@@ -6,7 +6,7 @@
     <meta name="format-detection" content="email=no,telephone=no"/>
     <meta name="x5-fullscreen" content="true"/>
     <meta name="full-screen" content="yes"/>
-    <title></title>
+    <title> </title>
     <style id="appLoadingStyle">
         .txtwav.flip{
             width: 170px;
@@ -14,9 +14,10 @@
             left: 50%;
             margin-left: -85px;
         }
-        .txtwav.flip span{
-            font-size: 40px;
+        .txtwav.flip span,.txtwav.flip i{
+            font-size: 37px;
             color: gray;
+            font-style: normal;
         }
         @keyframes flip-wave-1 {
             10% {
@@ -31,7 +32,7 @@
                 transform: translate3d(0, 0, 0) rotate(720deg)
             }
         }
-        .txtwav.flip :nth-child(20n+1) {
+        .txtwav.flip span:nth-child(20n+1) {
             display: inline-block;
             animation-duration: 3s;
             animation-name: flip-wave-1;
@@ -52,7 +53,7 @@
             }
         }
 
-        .txtwav.flip :nth-child(20n+2) {
+        .txtwav.flip span:nth-child(20n+2) {
             display: inline-block;
             animation-duration: 3s;
             animation-name: flip-wave-2;
@@ -73,7 +74,7 @@
             }
         }
 
-        .txtwav.flip :nth-child(20n+3) {
+        .txtwav.flip span:nth-child(20n+4) {
             display: inline-block;
             animation-duration: 3s;
             animation-name: flip-wave-3;
@@ -94,7 +95,7 @@
             }
         }
 
-        .txtwav.flip :nth-child(20n+4) {
+        .txtwav.flip span:nth-child(20n+5) {
             display: inline-block;
             animation-duration: 3s;
             animation-name: flip-wave-4;
@@ -106,7 +107,7 @@
 <body>
 <div id="appLoadingDiv">
     <div style="position: absolute; width: 100%; height: 60%; left: 0; top: 18%;">
-        <div class="txtwav flip"><span>一</span><span>汽</span><span>大</span><span>众</span></div>
+        <div class="txtwav flip"><span>一</span><span>汽</span><i>-</i><span>大</span><span>众</span></div>
     </div>
 </div>
 

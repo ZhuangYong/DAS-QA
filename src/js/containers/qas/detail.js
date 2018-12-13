@@ -93,7 +93,10 @@ class Detail extends BaseComponent {
                             {
                                 <CardMedia className="thumb-img">
                                     {
-                                        detail.thumbUrl ? <img src={"http://yqdz.oss-cn-beijing.aliyuncs.com/" + detail.thumbUrl} onError={e => e.target.src = detailBg}/> : <img src={detailBg}/>
+                                        detail.thumbUrl ? <img src={"http://yqdz.oss-cn-beijing.aliyuncs.com/" + detail.thumbUrl} onError={e => e.target.src = detailBg}/> : <div/>
+                                    }
+                                    {
+                                        detail.content ? <div className="detail-content" dangerouslySetInnerHTML={{__html: detail.content}} /> : <div/>
                                     }
                                 </CardMedia>
                             }
@@ -103,9 +106,9 @@ class Detail extends BaseComponent {
                             <CardText className="txt-time">
                                 <font>答题时间：</font>{`${(detail.startTime || "").split(" ")[0]} 至 ${(detail.endTime || "").split(" ")[0]}`}
                             </CardText>
-                            <CardText className="txt-win-way">
+                            {/*<CardText className="txt-win-way">
                                 <font>奖品及发放方式：</font>神秘大奖会根据获奖名单线下发放
-                            </CardText>
+                            </CardText>*/}
                             <CardActions className="qa-buttons">
                                 <FlatButton backgroundColor={this.getBackgroundColor(detail)} className={`status-${this.getStatus(detail)}`} label={this.getStatusStr(detail)} onClick={this.nextStep}/>
                             </CardActions>
@@ -117,7 +120,9 @@ class Detail extends BaseComponent {
                     {
                         this.state.pageIndex !== 0 && this.state.pageData.length > 1 ? <Card className="qa-detail">
                             <CardText className="txt-win-way">
-                                <div dangerouslySetInnerHTML={{__html: currentExam.content}} />
+                                {
+                                    currentExam.content && <div dangerouslySetInnerHTML={{__html: currentExam.content}} />
+                                }
                             </CardText>
                             <CardTitle title={<div className="qa-title">
                                 {`(${this.state.pageIndex}/${this.state.pageData.length - 1})`}{currentExam.title}
@@ -255,8 +260,8 @@ class Detail extends BaseComponent {
         const {startTime, endTime, userExamItemId} = detail;
         if (userExamItemId) return 4;
         if (!startTime || !endTime) return 5;
-        const s = new Date(startTime.replace(/-/g, "/")).getTime();
-        const e = new Date(endTime.replace(/-/g, "/")).getTime();
+        const s = new Date(startTime.replace(/-/g, "/").substr(0, 19)).getTime();
+        const e = new Date(endTime.replace(/-/g, "/").substr(0, 19)).getTime();
         const n = new Date().getTime();
         if (n > s && n < e) {
            return 1;

@@ -145,9 +145,9 @@ export function getWxinfoFromSession() {
 }
 
 // 获取url?后某参数
-export function getQueryString(name) {
+export function getQueryString(name, location) {
     let reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
-    let r = window.location.search.substr(1).match(reg);
+    let r = location.search.substr(1).match(reg);
     if (r !== null) {
         return /*unescape(*/r[2]/*)*/;
     }
@@ -588,7 +588,7 @@ export function wxAuthorizedUrl(appId, redirectUri, cbUrl) {
 }
 
 // 检测是否获取用户信息
-export function isGetUserInfo() {
+export function isGetUserInfo(location) {
     const pathname = location.pathname.split("/");
     return !((pathname[1] === "login") || (pathname[1] === "pay") || (pathname[3] === "play"));
 }

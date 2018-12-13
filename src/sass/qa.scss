@@ -75,6 +75,20 @@ $button-color: rgb(253, 178, 16);
         &>div{
             padding: 0 .35rem;
         }
+        .detail-content{
+            font-size: .42rem;
+            line-height: .68rem;
+            color: #474747;
+            margin-top: .3rem;
+            *{
+                font-size: .42rem;
+                line-height: .68rem;
+                color: #474747;
+                padding: 0;
+                margin: .3rem 0;
+            }
+
+        }
     }
     img{
         max-width: 100%;

@@ -109,9 +109,9 @@ class SignIn extends BaseComponent {
                             <p>
                                 <ActionGrade color="#f6d723" className="star"/>非连续签到，不能享受递增积分
                             </p>
-                            <p>
+                           {/* <p>
                                 <ActionGrade color="#f6d723" className="star"/>积分可用于工会组织的不定期福利抽奖，以及各类礼品兑换中
-                            </p>
+                            </p>*/}
                         </CardText>
                         <CardActions className="bottom-buttons">
                             <RaisedButton label="进入积分福利社" backgroundColor="#2d73c9" labelColor="#ffffff" className="jump-button" onClick={() => location.href = "/dasapp/integral/giftPage"}/>

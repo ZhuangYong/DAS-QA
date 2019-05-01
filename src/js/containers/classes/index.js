@@ -2,19 +2,13 @@ import React from "react";
 import {connect} from "react-redux";
 import {withRouter} from "react-router-dom";
 import Paper from "material-ui/Paper";
-import {Card, CardText, CardTitle} from "material-ui/Card";
-import Divider from 'material-ui/Divider';
-import RaisedButton from 'material-ui/RaisedButton';
+import {List, ListItem} from "material-ui";
+import SvgIcon from 'material-ui/SvgIcon';
 import BaseComponent from "../../components/common/BaseComponent";
 import "../../../sass/common/Scroller.scss";
-
-import ScrollToTopIcon from "material-ui/svg-icons/editor/vertical-align-top";
 import {linkTo, reqHeader} from "../../utils/comUtils";
-import {List, Snackbar} from "material-ui";
 import {bindActionCreators} from "redux";
-import Const from "../../utils/const";
-import {qaList} from "../../actions/qa";
-import {classCatelogList, classPage} from "../../actions/classes";
+import {classCatelogList} from "../../actions/classes";
 
 const style = {
     home: {
@@ -132,13 +126,18 @@ class Home extends BaseComponent {
      * */
     getRecommendSongsContent() {
         const pageData = this.props.classes.classCatelogList || [];
-
+        const RightIcon = (props) => (<SvgIcon
+            style={props.style}>
+            <path d="M13.729,11.236L1.722,0.294c-0.394-0.392-1.033-0.392-1.427,0c-0.394,0.392-0.394,1.028,0,1.42l11.283,10.283L0.296,22.28c-0.394,0.392-0.394,1.028,0,1.42c0.394,0.392,1.033,0.392,1.427,0l12.007-10.942c0.21-0.209,0.3-0.486,0.286-0.76C14.029,11.723,13.939,11.446,13.729,11.236z"/>
+        </SvgIcon>);
         return pageData.map(item => (
-            <Card key={item.catelogId} onClick={() => linkTo(`wc/${item.catelogId}/${item.name}`, false, "")}>
-                <CardTitle title={<div style={{fontSize: '.4rem', lineHeight: '.4rem'}}>
-                    {item.name}
-                </div>}/>
-            </Card>
+            <ListItem
+                key={item.catelogId}
+                style={{borderBottom: '1px solid #dedede', fontSize: '.4rem'}}
+                onClick={() => linkTo(`wc/${item.catelogId}/${encodeURI(encodeURI(item.name))}/`, false, "")}
+                primaryText={item.name}
+                rightToggle={<RightIcon style={{width: '.4rem'}}/>}
+                />
             )
         );
     }

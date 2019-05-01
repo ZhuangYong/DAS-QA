@@ -100,7 +100,7 @@ class WcPage extends BaseComponent {
     constructor(props) {
         super(props);
         const {catelogId, title} = this.props.match.params;
-        super.title(title);
+        super.title(decodeURI(title));
         this.state = {
             catelogId: parseInt(catelogId, 10),
             pageSize: 20,
@@ -229,7 +229,7 @@ class WcPage extends BaseComponent {
         if (catelogId > 0) {
             let param = {currentPage, pageSize, catelogId};
             //个性化推荐
-            this.props.actionClassPage(param, reqHeader(param), resolve, () => {});
+            this.props.actionClassPage(param, reqHeader(param), resolve);
             this.setState({
                 currentPage: currentPage,
                 loading: true
@@ -260,7 +260,8 @@ class WcPage extends BaseComponent {
                     {item.description}
                 </CardText>
                 <CardText className="time-set">
-                    <font color="#a9a9a9">发布时间：</font> {item.createTime.substr(0, 19)}
+                    <font color="#a9a9a9">发布者：{item.userName}</font>
+                    <font color="#a9a9a9" style={{marginLeft: '.4rem'}}>发布时间：{item.createTime.substr(0, 19)}</font>
                 </CardText>
             </Card>
             )

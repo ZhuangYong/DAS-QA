@@ -11,7 +11,7 @@ import Bundle from "../components/Bundle";
 import Home from "../containers/qas";
 import qaDetail from "../containers/qas/detail";
 import Punch from "../containers/punch/index";
-import Classes from "../containers/classes";
+import Classes from "../containers/classes/tabIndex";
 import WcPage from "../containers/classes/wcPage";
 import Login from "../containers/user/login";
 
